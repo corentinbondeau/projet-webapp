@@ -1,0 +1,65 @@
+@media (max-width: 1024px) {
+  .header-inner {
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+  }
+  .nav-center {
+    order: 3;
+    max-width: 100%;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-group-full {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .engines-grid {
+    grid-template-columns: 1fr;
+  }
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-selects {
+    flex-direction: column;
+    width: 100%;
+  }
+  .custom-select {
+    width: 100%;
+  }
+  .compare-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .modal-content {
+    margin: 0.5rem;
+    max-height: 95vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .brand-info h1 {
+    font-size: 1.15rem;
+  }
+  .brand-info p {
+    display: none;
+  }
+  .btn-text {
+    display: none;
+  }
+  .card-metrics-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    font-size: 0.85rem;
+  }
+}

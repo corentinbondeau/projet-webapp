@@ -1,0 +1,80 @@
+:root {
+  /* Police & Typographie */
+  --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, monospace;
+
+  /* Accents & Identité Automobile */
+  --accent-primary: #ff3838;
+  --accent-primary-hover: #ff4d4d;
+  --accent-secondary: #ff9f1a;
+  --accent-cyan: #00d2d3;
+  --accent-blue: #2e86de;
+  --accent-green: #10ac84;
+  --accent-purple: #5f27cd;
+
+  /* Rayons de courbure & Ombres */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Thème Sombre (Par défaut) */
+:root[data-theme="dark"],
+:root:not([data-theme]) {
+  --bg-app: #0d0f12;
+  --bg-surface: #16191f;
+  --bg-surface-elevated: #1e222b;
+  --bg-surface-glass: rgba(22, 25, 31, 0.85);
+  --bg-input: #12141a;
+  --bg-hover: #262b36;
+
+  --border-color: #2b303c;
+  --border-subtle: #1e222b;
+  --border-focus: #ff3838;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 25px rgba(255, 56, 56, 0.25);
+
+  --gauge-track: #262b36;
+  --gauge-fill: linear-gradient(135deg, #ff3838, #ff9f1a);
+}
+
+/* Thème Clair */
+:root[data-theme="light"] {
+  --bg-app: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #f8fafc;
+  --bg-surface-glass: rgba(255, 255, 255, 0.88);
+  --bg-input: #f1f5f9;
+  --bg-hover: #e2e8f0;
+
+  --border-color: #cbd5e1;
+  --border-subtle: #e2e8f0;
+  --border-focus: #ff3838;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #f8fafc;
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px rgba(255, 56, 56, 0.18);
+
+  --gauge-track: #e2e8f0;
+  --gauge-fill: linear-gradient(135deg, #ff3838, #ff9f1a);
+}

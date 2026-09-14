@@ -1,0 +1,260 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200" style="background:#0b0d11; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <linearGradient id="gradBrand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff3838"/>
+      <stop offset="100%" stop-color="#ff9f1a"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- TITRE MAQUETTES -->
+  <text x="60" y="70" fill="#ffffff" font-size="32" font-weight="900" letter-spacing="-0.5">🏎️ ApexEngine — Spécifications Graphiques &amp; Wireframes UX/UI</text>
+  <text x="60" y="105" fill="#94a3b8" font-size="16">Architecture de l'Interface Utilisateur (Desktop Dark/Light Mode &amp; Mobile Responsive Layout)</text>
+
+  <!-- ================= VUE 1 : DESKTOP DARK MODE ================= -->
+  <g transform="translate(60, 140)" filter="url(#shadow)">
+    <!-- Cadre Fenêtre -->
+    <rect width="900" height="580" rx="16" fill="#16191f" stroke="#2b303c" stroke-width="2"/>
+    
+    <!-- Window Bar -->
+    <rect width="900" height="40" rx="16" fill="#12141a"/>
+    <circle cx="25" cy="20" r="6" fill="#ff5f56"/>
+    <circle cx="45" cy="20" r="6" fill="#ffbd2e"/>
+    <circle cx="65" cy="20" r="6" fill="#27c93f"/>
+    <text x="450" y="25" fill="#64748b" font-size="12" text-anchor="middle" font-weight="600">ApexEngine — Mode Sombre (Desktop)</text>
+
+    <!-- Header / Navbar -->
+    <rect x="0" y="40" width="900" height="60" fill="#16191f" stroke="#2b303c" stroke-width="1"/>
+    <rect x="25" y="52" width="36" height="36" rx="8" fill="url(#gradBrand)"/>
+    <text x="36" y="76" fill="#fff" font-size="16">🏎️</text>
+    <text x="72" y="75" fill="#fff" font-size="18" font-weight="800">Apex<tspan fill="#ff3838">Engine</tspan></text>
+
+    <!-- Search input -->
+    <rect x="260" y="52" width="340" height="36" rx="18" fill="#12141a" stroke="#2b303c"/>
+    <text x="290" y="75" fill="#64748b" font-size="13">🔍 Rechercher un moteur, V8, 2JZ, Turbo...</text>
+
+    <!-- Actions -->
+    <rect x="620" y="52" width="80" height="36" rx="8" fill="#1e222b" stroke="#2b303c"/>
+    <text x="640" y="75" fill="#f8fafc" font-size="12" font-weight="600">🌙 Dark</text>
+
+    <rect x="710" y="52" width="165" height="36" rx="8" fill="url(#gradBrand)"/>
+    <text x="735" y="75" fill="#fff" font-size="12" font-weight="700">➕ Nouveau Moteur</text>
+
+    <!-- Stats Overview Cards -->
+    <g transform="translate(25, 115)">
+      <rect x="0" y="0" width="200" height="60" rx="8" fill="#1e222b" stroke="#2b303c"/>
+      <text x="15" y="25" fill="#94a3b8" font-size="11">Moteurs Répertoriés</text>
+      <text x="15" y="48" fill="#fff" font-size="18" font-weight="800">12 Moteurs</text>
+
+      <rect x="215" y="0" width="200" height="60" rx="8" fill="#1e222b" stroke="#2b303c"/>
+      <text x="230" y="25" fill="#94a3b8" font-size="11">Puissance Moyenne</text>
+      <text x="230" y="48" fill="#ff3838" font-size="18" font-weight="800">628 ch</text>
+
+      <rect x="430" y="0" width="200" height="60" rx="8" fill="#1e222b" stroke="#2b303c"/>
+      <text x="445" y="25" fill="#94a3b8" font-size="11">Le Plus Puissant</text>
+      <text x="445" y="48" fill="#ff9f1a" font-size="18" font-weight="800">1 600 ch (W16)</text>
+
+      <rect x="645" y="0" width="205" height="60" rx="8" fill="#1e222b" stroke="#2b303c"/>
+      <text x="660" y="25" fill="#94a3b8" font-size="11">Régime Max Record</text>
+      <text x="660" y="48" fill="#00d2d3" font-size="18" font-weight="800">20 000 tr/min</text>
+    </g>
+
+    <!-- Filter Pills -->
+    <g transform="translate(25, 190)">
+      <rect x="0" y="0" width="850" height="50" rx="10" fill="#12141a" stroke="#2b303c"/>
+      <rect x="15" y="10" width="70" height="30" rx="15" fill="#ff3838"/>
+      <text x="32" y="30" fill="#fff" font-size="12" font-weight="700">Tous</text>
+      <rect x="95" y="10" width="55" height="30" rx="15" fill="#1e222b" stroke="#2b303c"/>
+      <text x="110" y="30" fill="#94a3b8" font-size="12">V8</text>
+      <rect x="160" y="10" width="60" height="30" rx="15" fill="#1e222b" stroke="#2b303c"/>
+      <text x="175" y="30" fill="#94a3b8" font-size="12">V12</text>
+      <rect x="230" y="10" width="75" height="30" rx="15" fill="#1e222b" stroke="#2b303c"/>
+      <text x="242" y="30" fill="#94a3b8" font-size="12">Flat-6</text>
+      <rect x="315" y="10" width="90" height="30" rx="15" fill="#1e222b" stroke="#2b303c"/>
+      <text x="325" y="30" fill="#94a3b8" font-size="12">6 en ligne</text>
+      <text x="680" y="30" fill="#64748b" font-size="12">Trier par : Puissance ↓</text>
+    </g>
+
+    <!-- Cards Grid (3 cards demo) -->
+    <g transform="translate(25, 255)">
+      <!-- Card 1 : Ferrari V12 -->
+      <g transform="translate(0, 0)">
+        <rect width="270" height="295" rx="12" fill="#1e222b" stroke="#2b303c"/>
+        <rect width="270" height="110" rx="12" fill="#2d1517"/>
+        <text x="15" y="25" fill="#ff3838" font-size="10" font-weight="800">V12 • ATMOSPHÉRIQUE</text>
+        <text x="240" y="25" fill="#ff3838" font-size="14">❤️</text>
+        <text x="15" y="140" fill="#fff" font-size="16" font-weight="800">Ferrari F140 GA</text>
+        <text x="15" y="158" fill="#ff9f1a" font-size="11" font-weight="700">FERRARI • 2017-2024</text>
+        <rect x="15" y="170" width="240" height="45" rx="6" fill="#16191f"/>
+        <text x="35" y="190" fill="#ff3838" font-size="14" font-weight="800">800 ch</text>
+        <text x="110" y="190" fill="#fff" font-size="14" font-weight="800">718 Nm</text>
+        <text x="185" y="190" fill="#fff" font-size="14" font-weight="800">6.5 L</text>
+        <text x="15" y="235" fill="#94a3b8" font-size="11">Chef-d'œuvre italien culminant à 8 900 tr/min...</text>
+        <rect x="15" y="255" width="60" height="28" rx="14" fill="#2b303c"/>
+        <text x="25" y="273" fill="#ff9f1a" font-size="11">🔥 142</text>
+        <rect x="85" y="255" width="85" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="95" y="273" fill="#f8fafc" font-size="11">+ Comparer</text>
+        <rect x="180" y="255" width="35" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="192" y="273" fill="#fff" font-size="11">🔊</text>
+        <rect x="225" y="255" width="30" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="233" y="273" fill="#fff" font-size="11">✏️</text>
+      </g>
+
+      <!-- Card 2 : Porsche Flat-6 -->
+      <g transform="translate(290, 0)">
+        <rect width="270" height="295" rx="12" fill="#1e222b" stroke="#2b303c"/>
+        <rect width="270" height="110" rx="12" fill="#1a2530"/>
+        <text x="15" y="25" fill="#00d2d3" font-size="10" font-weight="800">FLAT-6 • ATMOSPHÉRIQUE</text>
+        <text x="240" y="25" fill="#ff3838" font-size="14">❤️</text>
+        <text x="15" y="140" fill="#fff" font-size="16" font-weight="800">Porsche MA1.77</text>
+        <text x="15" y="158" fill="#ff9f1a" font-size="11" font-weight="700">PORSCHE • 2021-2024</text>
+        <rect x="15" y="170" width="240" height="45" rx="6" fill="#16191f"/>
+        <text x="35" y="190" fill="#ff3838" font-size="14" font-weight="800">525 ch</text>
+        <text x="110" y="190" fill="#fff" font-size="14" font-weight="800">465 Nm</text>
+        <text x="185" y="190" fill="#fff" font-size="14" font-weight="800">4.0 L</text>
+        <text x="15" y="235" fill="#94a3b8" font-size="11">Moteur boxer de compétition montant à 9 000 tr...</text>
+        <rect x="15" y="255" width="60" height="28" rx="14" fill="#2b303c"/>
+        <text x="25" y="273" fill="#ff9f1a" font-size="11">🔥 98</text>
+        <rect x="85" y="255" width="85" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="95" y="273" fill="#f8fafc" font-size="11">+ Comparer</text>
+        <rect x="180" y="255" width="35" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="192" y="273" fill="#fff" font-size="11">🔊</text>
+        <rect x="225" y="255" width="30" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="233" y="273" fill="#fff" font-size="11">✏️</text>
+      </g>
+
+      <!-- Card 3 : Bugatti W16 -->
+      <g transform="translate(580, 0)">
+        <rect width="270" height="295" rx="12" fill="#1e222b" stroke="#2b303c"/>
+        <rect width="270" height="110" rx="12" fill="#231a30"/>
+        <text x="15" y="25" fill="#ff9f1a" font-size="10" font-weight="800">W16 • QUAD-TURBO</text>
+        <text x="240" y="25" fill="#ff3838" font-size="14">❤️</text>
+        <text x="15" y="140" fill="#fff" font-size="16" font-weight="800">Bugatti 8.0L W16</text>
+        <text x="15" y="158" fill="#ff9f1a" font-size="11" font-weight="700">BUGATTI • 2016-2024</text>
+        <rect x="15" y="170" width="240" height="45" rx="6" fill="#16191f"/>
+        <text x="35" y="190" fill="#ff3838" font-size="14" font-weight="800">1600 ch</text>
+        <text x="110" y="190" fill="#fff" font-size="14" font-weight="800">1600Nm</text>
+        <text x="185" y="190" fill="#fff" font-size="14" font-weight="800">8.0 L</text>
+        <text x="15" y="235" fill="#94a3b8" font-size="11">Summum technologique avec 4 turbos séquentiels...</text>
+        <rect x="15" y="255" width="60" height="28" rx="14" fill="#2b303c"/>
+        <text x="25" y="273" fill="#ff9f1a" font-size="11">🔥 210</text>
+        <rect x="85" y="255" width="85" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="95" y="273" fill="#f8fafc" font-size="11">+ Comparer</text>
+        <rect x="180" y="255" width="35" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="192" y="273" fill="#fff" font-size="11">🔊</text>
+        <rect x="225" y="255" width="30" height="28" rx="6" fill="#16191f" stroke="#2b303c"/>
+        <text x="233" y="273" fill="#fff" font-size="11">✏️</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- ================= VUE 2 : MOBILE RESPONSIVE ================= -->
+  <g transform="translate(1000, 140)" filter="url(#shadow)">
+    <!-- Device Frame -->
+    <rect width="280" height="580" rx="36" fill="#16191f" stroke="#2b303c" stroke-width="4"/>
+    <rect x="85" y="12" width="110" height="18" rx="9" fill="#000"/>
+
+    <!-- App Header Mobile -->
+    <rect x="10" y="45" width="260" height="50" rx="8" fill="#1e222b"/>
+    <rect x="20" y="55" width="30" height="30" rx="6" fill="url(#gradBrand)"/>
+    <text x="58" y="75" fill="#fff" font-size="14" font-weight="800">Apex<tspan fill="#ff3838">Engine</tspan></text>
+    <rect x="225" y="55" width="35" height="30" rx="6" fill="#12141a"/>
+    <text x="235" y="75" fill="#fff" font-size="12">☀️</text>
+
+    <!-- Search Mobile -->
+    <rect x="15" y="105" width="250" height="34" rx="17" fill="#12141a" stroke="#2b303c"/>
+    <text x="35" y="127" fill="#64748b" font-size="11">🔍 Rechercher...</text>
+
+    <!-- Stat Mobile Pill -->
+    <rect x="15" y="148" width="250" height="42" rx="8" fill="#1e222b"/>
+    <text x="25" y="173" fill="#94a3b8" font-size="11">12 Moteurs • Moy. <tspan fill="#ff3838" font-weight="700">628 ch</tspan></text>
+
+    <!-- Mobile Card -->
+    <rect x="15" y="200" width="250" height="280" rx="10" fill="#1e222b" stroke="#2b303c"/>
+    <rect x="15" y="200" width="250" height="90" rx="10" fill="#2d1517"/>
+    <text x="25" y="225" fill="#ff3838" font-size="9" font-weight="800">V12 • FERRARI</text>
+    <text x="25" y="310" fill="#fff" font-size="14" font-weight="800">Ferrari F140 GA</text>
+    <rect x="25" y="325" width="230" height="35" rx="6" fill="#16191f"/>
+    <text x="40" y="347" fill="#ff3838" font-size="12" font-weight="800">800 ch</text>
+    <text x="115" y="347" fill="#fff" font-size="12" font-weight="800">718 Nm</text>
+    <text x="190" y="347" fill="#fff" font-size="12" font-weight="800">6.5 L</text>
+    <rect x="25" y="440" width="230" height="30" rx="6" fill="url(#gradBrand)"/>
+    <text x="85" y="460" fill="#fff" font-size="11" font-weight="700">Fiche &amp; Simulateur 🔊</text>
+
+    <!-- Home indicator -->
+    <rect x="100" y="565" width="80" height="4" rx="2" fill="#fff" opacity="0.4"/>
+  </g>
+
+  <!-- ================= VUE 3 : MODALE TACHOMÈTRE & AUDIO SIMULATOR ================= -->
+  <g transform="translate(60, 755)" filter="url(#shadow)">
+    <rect width="650" height="380" rx="16" fill="#16191f" stroke="#2b303c" stroke-width="2"/>
+    <text x="30" y="40" fill="#fff" font-size="18" font-weight="800">Fiche Détaillée &amp; Simulateur Audio Web API</text>
+    <text x="610" y="40" fill="#94a3b8" font-size="16">✕</text>
+
+    <!-- Tachometer dial representation -->
+    <g transform="translate(50, 75)">
+      <circle cx="100" cy="100" r="80" fill="#12141a" stroke="#ff3838" stroke-width="8" stroke-dasharray="350 150"/>
+      <text x="100" y="95" fill="#fff" font-size="28" font-weight="900" text-anchor="middle" font-family="monospace">8 900</text>
+      <text x="100" y="120" fill="#ff3838" font-size="10" font-weight="800" text-anchor="middle">TR / MIN</text>
+      <!-- Controls -->
+      <g transform="translate(220, 30)">
+        <text x="0" y="20" fill="#fff" font-size="15" font-weight="700">Contrôle du Régime Sonore</text>
+        <rect x="0" y="40" width="320" height="8" rx="4" fill="#2b303c"/>
+        <circle cx="280" cy="44" r="10" fill="#ff3838"/>
+        <rect x="0" y="70" width="150" height="36" rx="8" fill="url(#gradBrand)"/>
+        <text x="25" y="93" fill="#fff" font-size="12" font-weight="700">🔊 Accélérer !</text>
+        <rect x="160" y="70" width="150" height="36" rx="8" fill="#1e222b" stroke="#2b303c"/>
+        <text x="180" y="93" fill="#f8fafc" font-size="12" font-weight="600">Couper Contact</text>
+      </g>
+    </g>
+
+    <!-- Specs Grid -->
+    <g transform="translate(30, 270)">
+      <rect x="0" y="0" width="135" height="60" rx="8" fill="#1e222b"/>
+      <text x="15" y="25" fill="#94a3b8" font-size="11">Puissance</text>
+      <text x="15" y="48" fill="#ff3838" font-size="15" font-weight="800">800 ch</text>
+
+      <rect x="150" y="0" width="135" height="60" rx="8" fill="#1e222b"/>
+      <text x="165" y="25" fill="#94a3b8" font-size="11">Couple</text>
+      <text x="165" y="48" fill="#fff" font-size="15" font-weight="800">718 Nm</text>
+
+      <rect x="300" y="0" width="135" height="60" rx="8" fill="#1e222b"/>
+      <text x="315" y="25" fill="#94a3b8" font-size="11">Rendement</text>
+      <text x="315" y="48" fill="#00d2d3" font-size="15" font-weight="800">123.1 ch/L</text>
+
+      <rect x="450" y="0" width="135" height="60" rx="8" fill="#1e222b"/>
+      <text x="465" y="25" fill="#94a3b8" font-size="11">Production</text>
+      <text x="465" y="48" fill="#ff9f1a" font-size="15" font-weight="800">2017-2024</text>
+    </g>
+  </g>
+
+  <!-- ================= VUE 4 : COMPARATEUR CÔTE À CÔTE ================= -->
+  <g transform="translate(740, 755)" filter="url(#shadow)">
+    <rect width="540" height="380" rx="16" fill="#16191f" stroke="#2b303c" stroke-width="2"/>
+    <text x="30" y="40" fill="#fff" font-size="18" font-weight="800">⚖️ Comparateur Face-à-Face</text>
+    
+    <g transform="translate(30, 70)">
+      <!-- Moteur 1 -->
+      <rect x="0" y="0" width="225" height="270" rx="10" fill="#1e222b" stroke="#2b303c"/>
+      <text x="15" y="30" fill="#fff" font-size="14" font-weight="800">Ferrari F140 GA</text>
+      <text x="15" y="50" fill="#ff9f1a" font-size="11">V12 • 6.5L</text>
+      <text x="15" y="85" fill="#ff3838" font-size="18" font-weight="900">800 ch</text>
+      <text x="15" y="115" fill="#94a3b8" font-size="12">Couple : <tspan fill="#fff">718 Nm</tspan></text>
+      <text x="15" y="145" fill="#94a3b8" font-size="12">Régime : <tspan fill="#fff">8 900 tr/min</tspan></text>
+      <rect x="15" y="170" width="195" height="8" rx="4" fill="#ff3838"/>
+      <text x="15" y="200" fill="#10ac84" font-size="11" font-weight="700">✓ Vainqueur Puissance</text>
+
+      <!-- Moteur 2 -->
+      <rect x="250" y="0" width="225" height="270" rx="10" fill="#1e222b" stroke="#2b303c"/>
+      <text x="265" y="30" fill="#fff" font-size="14" font-weight="800">Porsche MA1.77</text>
+      <text x="265" y="50" fill="#ff9f1a" font-size="11">Flat-6 • 4.0L</text>
+      <text x="265" y="85" fill="#00d2d3" font-size="18" font-weight="900">525 ch</text>
+      <text x="265" y="115" fill="#94a3b8" font-size="12">Couple : <tspan fill="#fff">465 Nm</tspan></text>
+      <text x="265" y="145" fill="#94a3b8" font-size="12">Régime : <tspan fill="#fff">9 000 tr/min</tspan></text>
+      <rect x="265" y="170" width="130" height="8" rx="4" fill="#00d2d3"/>
+      <text x="265" y="200" fill="#10ac84" font-size="11" font-weight="700">✓ Vainqueur Régime Max</text>
+    </g>
+  </g>
+</svg>
