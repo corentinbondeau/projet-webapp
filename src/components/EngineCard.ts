@@ -146,12 +146,13 @@ export class EngineCard {
           AudioEngineSimulator.stop();
           Toast.show('Son moteur arrêté', 'info');
         } else {
-          AudioEngineSimulator.start(engine.soundPitch, engine.maxRpm);
+          AudioEngineSimulator.start(engine);
           AudioEngineSimulator.revUp();
-          Toast.show(`Rugissement du ${engine.name} ! 🔊`, 'info');
+          const soundLabel = engine.configuration === 'Électrique' ? 'Whine électrique' : 'Rugissement';
+          Toast.show(`${soundLabel} du ${engine.name} (${engine.configuration}) ! 🔊`, 'info');
           setTimeout(() => {
             AudioEngineSimulator.stop();
-          }, 2400);
+          }, 2600);
         }
       });
     }

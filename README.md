@@ -137,12 +137,21 @@ Un bouton **Reset** dans la barre de navigation permet à tout moment de re-tél
 - **Flexbox** pour l'alignement des éléments de navigation, barres de recherche et actions de cartes.
 - Adaptation mobile complète (collapse des barres de filtres, drawer de comparaison plein écran, boutons tactiles larges).
 
-### 9. Simulateur Sonore & Compte-Tours (Web Audio API)
+### 9. Simulateur Sonore Multi-Architecture & Compte-Tours (Web Audio API)
 *Fichier : `src/services/audioEngine.ts`*
 
-Fonctionnalité originale et immersive :
-- Utilise un `AudioContext` natif avec 3 oscillateurs (`sawtooth` et `triangle`) et un filtre `BiquadFilterNode` passe-bas.
-- Lorsque l'utilisateur augmente le régime sur le compte-tours (slider ou bouton accélération), la fréquence fondamentale et l'ouverture du filtre augmentent, reproduisant l'échappement d'un moteur de course.
+Fonctionnalité originale, réaliste et immersive démontrant la puissance de la **Web Audio API** standard :
+- **Physique acoustique réelle** : La fréquence fondamentale d'allumage est calculée en fonction du nombre réel d'explosions par tour de vilebrequin ($f = \frac{\text{RPM}}{60} \times \frac{\text{cylindres}}{2}$).
+- **Profils sonores dédiés par architecture** :
+  - **Ferrari & Lamborghini V12** : Sonorité lyrique et symphonique aiguë (6 pulses/tour) montant jusqu'à 9 000 tr/min.
+  - **BMW V10 F1** : Cri strident et déphasage asymétrique typique des blocs V10.
+  - **Porsche Flat-6 Boxer** : Timbre métallique et rauque avec annulation des forces antagonistes.
+  - **Audi 5-Cylindres TFSI** : Grondement syncopé et irrégulier légendaire du Groupe B (ordre 1-2-4-5-3) modélisé par LFO.
+  - **Toyota 2JZ 6 en ligne & AMG 4 cylindres** : Sons lisses ou rageurs avec sifflement de turbocompresseur.
+  - **Mazda 13B Rotatif (Wankel)** : Timbre suraigu type turbine / tronçonneuse sans soupapes.
+  - **Tesla Plaid (100% Électrique)** : Synthèse purement magnétique par onde sinusoïdale de l'onduleur (jusqu'à 20 000 tr/min) sans aucune explosion thermique.
+- **Suralimentation & Turbo Spooling** : Génération d'un souffle d'aspiration et sifflement proportionnel au régime via filtre passe-bande à fort facteur Q, et décharge de soupape de surpression (*blow-off valve / wastegate flutter*) au lever de pied.
+- **Saturation d'échappement** : Traitement non-linéaire par `WaveShaperNode` simulant la résonance du collecteur et de la ligne d'échappement.
 
 ---
 

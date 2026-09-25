@@ -214,13 +214,17 @@ export class EngineDetailModal {
           slider.value = `${idleRpm}`;
           Toast.show('Contact coupé.', 'info');
         } else {
-          AudioEngineSimulator.start(e.soundPitch, e.maxRpm);
+          AudioEngineSimulator.start(e);
           this.isAudioRunning = true;
           if (audioText) audioText.textContent = 'Couper le contact';
           slider.disabled = false;
           revBtn.disabled = false;
           rpmDisplay.textContent = `${idleRpm}`;
-          Toast.show(`Moteur ${e.name} démarré au ralenti ! 🔊`, 'success');
+          const isElectric = e.configuration === 'Électrique' || e.fuel === 'Électrique';
+          const startMsg = isElectric
+            ? `Système électrique ${e.name} sous tension ! ⚡🔊`
+            : `Moteur ${e.name} (${e.configuration}) démarré au ralenti ! 🔊`;
+          Toast.show(startMsg, 'success');
         }
       });
 
