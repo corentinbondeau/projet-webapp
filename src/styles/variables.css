@@ -4,14 +4,25 @@
   --font-display: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, monospace;
 
-  /* Accents & Identité Automobile */
-  --accent-primary: #ff3838;
-  --accent-primary-hover: #ff4d4d;
-  --accent-secondary: #ff9f1a;
-  --accent-cyan: #00d2d3;
-  --accent-blue: #2e86de;
-  --accent-green: #10ac84;
-  --accent-purple: #5f27cd;
+  /* Palette Principale : Vert, Bleu, Beige */
+  --accent-primary: #10b981;
+  --accent-primary-hover: #059669;
+  --accent-secondary: #2563eb;
+  --accent-secondary-hover: #1d4ed8;
+  --accent-tertiary: #c5a059;
+  
+  --accent-green: #10b981;
+  --accent-green-dark: #047857;
+  --accent-green-light: #34d399;
+  
+  --accent-blue: #2563eb;
+  --accent-blue-dark: #1e40af;
+  --accent-blue-light: #60a5fa;
+  --accent-cyan: #0ea5e9;
+
+  --accent-beige: #d8c7b5;
+  --accent-beige-dark: #bba287;
+  --accent-beige-light: #f5efe6;
 
   /* Rayons de courbure & Ombres */
   --radius-sm: 6px;
@@ -24,57 +35,57 @@
   --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Thème Sombre (Par défaut) */
+/* Thème Sombre (Par défaut) : Fond bleu nuit profond, touches vert émeraude & accents beige */
 :root[data-theme="dark"],
 :root:not([data-theme]) {
-  --bg-app: #0d0f12;
-  --bg-surface: #16191f;
-  --bg-surface-elevated: #1e222b;
-  --bg-surface-glass: rgba(22, 25, 31, 0.85);
-  --bg-input: #12141a;
-  --bg-hover: #262b36;
+  --bg-app: #081018;
+  --bg-surface: #0f1d2b;
+  --bg-surface-elevated: #16283b;
+  --bg-surface-glass: rgba(15, 29, 43, 0.88);
+  --bg-input: #0b1521;
+  --bg-hover: #1d334a;
 
-  --border-color: #2b303c;
-  --border-subtle: #1e222b;
-  --border-focus: #ff3838;
+  --border-color: #1e3a54;
+  --border-subtle: #14283b;
+  --border-focus: #10b981;
 
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --text-inverse: #0f172a;
+  --text-primary: #f5efe6;
+  --text-secondary: #9cb5cb;
+  --text-muted: #5e7a94;
+  --text-inverse: #081018;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.55);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 25px rgba(255, 56, 56, 0.25);
+  --shadow-glow: 0 0 25px rgba(16, 185, 129, 0.28);
 
-  --gauge-track: #262b36;
-  --gauge-fill: linear-gradient(135deg, #ff3838, #ff9f1a);
+  --gauge-track: #16283b;
+  --gauge-fill: linear-gradient(135deg, #10b981, #2563eb);
 }
 
-/* Thème Clair */
+/* Thème Clair : Fond beige naturel, surfaces blanches/sable, texte bleu marine & accents vert */
 :root[data-theme="light"] {
-  --bg-app: #f1f5f9;
+  --bg-app: #f6f2ea;
   --bg-surface: #ffffff;
-  --bg-surface-elevated: #f8fafc;
-  --bg-surface-glass: rgba(255, 255, 255, 0.88);
-  --bg-input: #f1f5f9;
-  --bg-hover: #e2e8f0;
+  --bg-surface-elevated: #ece5d8;
+  --bg-surface-glass: rgba(255, 255, 255, 0.90);
+  --bg-input: #fbf9f5;
+  --bg-hover: #dfd6c7;
 
-  --border-color: #cbd5e1;
-  --border-subtle: #e2e8f0;
-  --border-focus: #ff3838;
+  --border-color: #d6ccbe;
+  --border-subtle: #e6dfd2;
+  --border-focus: #10b981;
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
-  --text-inverse: #f8fafc;
+  --text-primary: #0a1926;
+  --text-secondary: #2c4a68;
+  --text-muted: #6c849c;
+  --text-inverse: #f6f2ea;
 
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 20px rgba(255, 56, 56, 0.18);
+  --shadow-sm: 0 2px 6px rgba(10, 25, 38, 0.06);
+  --shadow-md: 0 8px 20px rgba(10, 25, 38, 0.09);
+  --shadow-lg: 0 16px 36px rgba(10, 25, 38, 0.12);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.22);
 
-  --gauge-track: #e2e8f0;
-  --gauge-fill: linear-gradient(135deg, #ff3838, #ff9f1a);
+  --gauge-track: #dfd6c7;
+  --gauge-fill: linear-gradient(135deg, #10b981, #2563eb);
 }
