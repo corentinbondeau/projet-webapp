@@ -42,9 +42,9 @@ Délégation avec `closest()`, custom events entre composants (`open-engine-form
 - `n` → nouveau moteur
 - `Escape` → ferme les modales
 
-### Fetch — `src/services/engineService.ts`
+### Fetch / API — `src/services/engineService.ts`
 
-Chargement de `/data/engines.json` en async/await. Le bouton reset re-fetch les données d'origine.
+En dev, `GET /api/engines` (middleware Vite) renvoie le JSON. Fallback sur `/data/engines.json`. Reset = clear LocalStorage + re-fetch.
 
 ### LocalStorage — `src/state/storage.ts`
 
@@ -67,8 +67,9 @@ Son synthétisé selon l'architecture (V12, V10, flat-6, rotatif, électrique…
 ```
 projet/
 ├── index.html
+├── vite.config.ts      # endpoint GET /api/engines en dev
 ├── public/data/engines.json
-├── maquettes/
+├── maquettes/          # wireframes (rendu)
 ├── src/
 │   ├── main.ts
 │   ├── types/engine.ts
@@ -79,6 +80,8 @@ projet/
 │   └── styles/
 └── README.md
 ```
+
+> pour le rendu zip : code + maquettes, **sans** `node_modules` ni `dist`.
 
 ## Soutenance — questions possibles
 

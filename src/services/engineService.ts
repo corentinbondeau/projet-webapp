@@ -2,7 +2,10 @@ import { Engine } from '../types/engine';
 import { StorageService } from '../state/storage';
 
 export class EngineService {
-  private static DATA_URL = '/data/engines.json';
+  // en dev : vraie route REST GET /api/engines (middleware vite)
+  // en prod / fallback : fichier statique
+  private static API_URL = '/api/engines';
+  private static FALLBACK_URL = '/data/engines.json';
 
   // localstorage sinon fetch
   static async loadInitialEngines(): Promise<Engine[]> {
@@ -14,22 +17,32 @@ export class EngineService {
     return this.fetchFromApi();
   }
 
-  // fetch du json
+  // GET sur l'api (fetch + async/await)
   static async fetchFromApi(): Promise<Engine[]> {
     try {
-      const response = await fetch(this.DATA_URL);
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
-      }
-      const data: Engine[] = await response.json();
-      
-      // save
+      const data = await this.getJson<Engine[]>(this.API_URL).catch(() =>
+        this.getJson<Engine[]>(this.FALLBACK_URL)
+      );
+
       StorageService.saveEngines(data);
       return data;
     } catch (error) {
-      console.error('Erreur lors du Fetch des données moteurs:', error);
+      console.error('erreur fetch moteurs:', error);
       throw error;
     }
+  }
+
+  private static async getJson<T>(url: string): Promise<T> {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    }
+
+    return response.json() as Promise<T>;
   }
 
   // reset + re-fetch
