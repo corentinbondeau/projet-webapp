@@ -1,47 +1,93 @@
+@media (max-width: 1100px) {
+  .engines-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-banner {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .hero-action-group,
+  .hero-meta {
+    justify-content: flex-start;
+  }
+}
+
 @media (max-width: 1024px) {
   .header-inner {
     flex-wrap: wrap;
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
   }
+
   .nav-center {
     order: 3;
     max-width: 100%;
     width: 100%;
-    margin-top: 0.5rem;
   }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .form-group-full {
     grid-column: span 1;
   }
 }
 
 @media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+  :root {
+    --space: 16px;
   }
+
   .engines-grid {
     grid-template-columns: 1fr;
   }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .filter-row {
     flex-direction: column;
     align-items: stretch;
   }
+
   .filter-selects {
     flex-direction: column;
     width: 100%;
   }
-  .custom-select {
+
+  .custom-select,
+  .pill-btn {
     width: 100%;
   }
+
+  .filter-pills {
+    width: 100%;
+  }
+
   .compare-inner {
     flex-direction: column;
     align-items: stretch;
   }
+
   .modal-content {
-    margin: 0.5rem;
-    max-height: 95vh;
+    margin: 0.25rem;
+    max-height: 94vh;
+  }
+
+  .card-header-img {
+    height: 190px;
+  }
+
+  .hero-banner {
+    margin-top: 1.25rem;
+    padding-block: 2rem;
   }
 }
 
@@ -49,17 +95,31 @@
   .stats-grid {
     grid-template-columns: 1fr;
   }
-  .brand-info h1 {
-    font-size: 1.15rem;
+
+  .brand-logo {
+    height: 34px;
+    max-width: 130px;
   }
-  .brand-info p {
-    display: none;
-  }
+
   .btn-text {
     display: none;
   }
+
+  .nav-actions .btn {
+    padding: 0.6rem 0.75rem;
+  }
+
   .card-metrics-grid {
-    grid-template-columns: 1fr 1fr 1fr;
     font-size: 0.85rem;
+  }
+
+  .toast-container {
+    left: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .toast {
+    min-width: 0;
+    max-width: none;
   }
 }

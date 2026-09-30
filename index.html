@@ -3,55 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ApexEngine — moteurs de voitures</title>
-  <meta name="description" content="Encyclopédie et comparateur de moteurs (TypeScript + Vite)." />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>ApexEngine — sons & moteurs automobiles</title>
+  <meta name="description" content="Plateforme premium pour découvrir, comparer et écouter les moteurs de voitures légendaires." />
+  <link rel="icon" type="image/png" href="/favicon-logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/styles/main.css" />
 </head>
 <body>
   <div id="app">
-    <!-- nav -->
     <header id="app-navbar"></header>
 
-    <!-- hero -->
     <section class="hero-banner">
       <div class="hero-title-group">
-        <h2>Catalogue de moteurs</h2>
-        <p>Filtre, compare, et écoute un aperçu sonore via le compte-tours.</p>
+        <span class="hero-kicker">ApexEngine</span>
+        <h2>Écoute la mécanique.</h2>
+        <p>Catalogue premium de moteurs automobiles. Filtre, compare, et lance un aperçu sonore fidèle via le compte-tours.</p>
+      </div>
+      <div class="hero-action-group">
+        <button class="btn btn-primary" id="hero-cta-listen" type="button">Explorer le catalogue</button>
+        <button class="btn btn-secondary" id="hero-cta-add" type="button">Ajouter un moteur</button>
+        <div class="hero-meta">
+          <span>Web Audio</span>
+          <span>Vanilla TS</span>
+          <span>Proxy Store</span>
+        </div>
       </div>
     </section>
 
-    <!-- stats -->
     <section id="stats-overview-container"></section>
-
-    <!-- filtres -->
     <section id="filter-bar-container"></section>
-
-    <!-- grille -->
     <main id="engine-grid-container"></main>
 
-    <!-- tiroir compare -->
     <aside id="compare-drawer"></aside>
-
-    <!-- modale compare -->
     <div id="compare-modal" class="modal-backdrop"></div>
-
-    <!-- form ajout / édition -->
     <div id="engine-form-modal" class="modal-backdrop"></div>
-
-    <!-- détail + tacho -->
     <div id="engine-detail-modal" class="modal-backdrop"></div>
 
-    <!-- footer -->
     <footer class="app-footer">
       <div>
-        <strong>ApexEngine</strong> — projet web AP4 (TS vanilla)
+        <strong>ApexEngine</strong> — performance, mécanique, son.
       </div>
       <div>
-        state via <code>Proxy</code> · son via <code>Web Audio API</code>
+        state via <code>Proxy</code> · audio via <code>Web Audio API</code>
       </div>
     </footer>
   </div>

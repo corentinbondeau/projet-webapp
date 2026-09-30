@@ -60,7 +60,8 @@ Animations (stagger des cartes, heartbeat favoris, toasts), grille responsive (`
 
 ### Web Audio — `src/services/audioEngine.ts`
 
-Son synthétisé selon l'architecture (V12, V10, flat-6, rotatif, électrique…). Fréquence liée au régime : f ≈ RPM/60 × cylindres/2. Turbo + wave shaper pour l'échappement.
+Vrais samples moteurs (Freesound / Mixkit) chargés via `fetch` + `decodeAudioData`.
+Le `playbackRate` suit le régime (RPM). Crédits dans `public/sounds/CREDITS.md`.
 
 ## Structure
 

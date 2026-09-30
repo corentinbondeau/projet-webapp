@@ -71,8 +71,8 @@ export class EngineCard {
               <span>${engine.likes || 0}</span>
             </button>
 
-            <button class="btn-icon" data-action="play-sound" title="Écouter le son du moteur (Web Audio)">
-              <span>🔊</span>
+            <button class="btn-icon btn-play" data-action="play-sound" title="Écouter le son du moteur (Web Audio)">
+              <span>▶</span>
             </button>
           </div>
 
@@ -138,20 +138,30 @@ export class EngineCard {
     }
 
     // aperçu son
-    const soundBtn = card.querySelector('[data-action="play-sound"]');
+    const soundBtn = card.querySelector('[data-action="play-sound"]') as HTMLButtonElement | null;
     if (soundBtn) {
       soundBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (AudioEngineSimulator.getActiveStatus()) {
           AudioEngineSimulator.stop();
+          soundBtn.classList.remove('is-playing');
+          soundBtn.innerHTML = '<span>▶</span>';
           Toast.show('Son moteur arrêté', 'info');
         } else {
+          document.querySelectorAll('.btn-play.is-playing').forEach((el) => {
+            el.classList.remove('is-playing');
+            el.innerHTML = '<span>▶</span>';
+          });
           AudioEngineSimulator.start(engine);
           AudioEngineSimulator.revUp();
+          soundBtn.classList.add('is-playing');
+          soundBtn.innerHTML = '<span>■</span>';
           const soundLabel = engine.configuration === 'Électrique' ? 'Whine électrique' : 'Rugissement';
-          Toast.show(`${soundLabel} du ${engine.name} (${engine.configuration}) ! 🔊`, 'info');
+          Toast.show(`${soundLabel} du ${engine.name} (${engine.configuration})`, 'info');
           setTimeout(() => {
             AudioEngineSimulator.stop();
+            soundBtn.classList.remove('is-playing');
+            soundBtn.innerHTML = '<span>▶</span>';
           }, 2600);
         }
       });

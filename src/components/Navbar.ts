@@ -27,12 +27,21 @@ export class Navbar {
 
   private applyTheme(mode: ThemeMode): void {
     const root = document.documentElement;
+    let resolved: 'dark' | 'light' = 'dark';
     if (mode === 'auto') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+      resolved = prefersDark ? 'dark' : 'light';
     } else {
-      root.setAttribute('data-theme', mode);
+      resolved = mode;
     }
+    root.setAttribute('data-theme', resolved);
+    this.syncLogo(resolved);
+  }
+
+  private syncLogo(theme: 'dark' | 'light'): void {
+    const logo = this.element.querySelector('.brand-logo') as HTMLImageElement | null;
+    if (!logo) return;
+    logo.src = theme === 'light' ? '/logo-dark.png' : '/logo.png';
   }
 
   public render(): void {
@@ -51,14 +60,13 @@ export class Navbar {
     };
 
     this.element.className = 'app-header';
+    const logoSrc = document.documentElement.getAttribute('data-theme') === 'light'
+      ? '/logo-dark.png'
+      : '/logo.png';
     this.element.innerHTML = `
       <div class="header-inner">
-        <div class="brand-container" id="brand-home-btn">
-          <div class="brand-logo">🏎️</div>
-          <div class="brand-info">
-            <h1>Apex<span>Engine</span></h1>
-            <p>Encyclopédie & Comparateur de Moteurs</p>
-          </div>
+        <div class="brand-container" id="brand-home-btn" title="ApexEngine">
+          <img class="brand-logo" src="${logoSrc}" alt="ApexEngine" />
         </div>
 
         <div class="nav-center">
@@ -71,7 +79,7 @@ export class Navbar {
               type="text" 
               class="search-input" 
               id="global-search-input" 
-              placeholder="Rechercher un moteur, V8, Ferrari, 2JZ, Turbo..." 
+              placeholder="Rechercher une voiture, un moteur..." 
               value="${store.state.filters.searchQuery}"
               autocomplete="off"
             />
@@ -85,18 +93,15 @@ export class Navbar {
           </button>
 
           <button class="btn btn-secondary" id="btn-export-json" title="Exporter les données en JSON">
-            <span>💾</span>
             <span class="btn-text">Export</span>
           </button>
 
           <button class="btn btn-secondary" id="btn-reset-data" title="Réinitialiser la base par défaut">
-            <span>🔄</span>
             <span class="btn-text">Reset</span>
           </button>
 
           <button class="btn btn-primary" id="btn-add-engine">
-            <span>➕</span>
-            <span class="btn-text">Ajouter un moteur</span>
+            <span class="btn-text">Ajouter</span>
           </button>
         </div>
       </div>

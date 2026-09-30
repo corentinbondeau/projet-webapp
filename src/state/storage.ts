@@ -1,7 +1,7 @@
 import { Engine, ThemeMode } from '../types/engine';
 
 const STORAGE_KEYS = {
-  ENGINES: 'apex_engines_data_v1',
+  ENGINES: 'apex_engines_data_v2',
   THEME: 'apex_theme_mode_v1',
   COMPARE: 'apex_compare_ids_v1'
 };

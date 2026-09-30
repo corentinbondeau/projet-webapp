@@ -3,3 +3,5 @@ dist/
 .DS_Store
 *.local
 .vite/
+.venv-img/
+8206928b-3ab4-432b-81f6-32bd50009f9c.png

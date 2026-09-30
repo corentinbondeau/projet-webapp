@@ -80,4 +80,12 @@ class App {
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.init();
+
+  document.getElementById('hero-cta-listen')?.addEventListener('click', () => {
+    document.getElementById('engine-grid-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  document.getElementById('hero-cta-add')?.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('open-engine-form', { detail: { mode: 'create' } }));
+  });
 });

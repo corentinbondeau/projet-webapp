@@ -21,25 +21,25 @@ export class StatsOverview {
     this.element.innerHTML = `
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-icon">🏎️</div>
+          <div class="stat-icon">01</div>
           <div class="stat-data">
-            <h4>Moteurs répertoriés</h4>
+            <h4>Moteurs</h4>
             <div class="stat-value">${stats.total}</div>
-            <div class="stat-sub">Thermiques, Hybrides & Électriques</div>
+            <div class="stat-sub">Catalogue actif</div>
           </div>
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">⚡</div>
+          <div class="stat-icon">CH</div>
           <div class="stat-data">
             <h4>Puissance moyenne</h4>
             <div class="stat-value">${formatNumber(stats.avgPower)} <span style="font-size: 0.9rem; font-weight: 500;">ch</span></div>
-            <div class="stat-sub">Toutes architectures confondues</div>
+            <div class="stat-sub">Toutes architectures</div>
           </div>
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">🔥</div>
+          <div class="stat-icon">MAX</div>
           <div class="stat-data">
             <h4>Le plus puissant</h4>
             <div class="stat-value">${stats.maxPowerEngine ? `${formatNumber(stats.maxPowerEngine.power)} ch` : '-'}</div>
@@ -48,10 +48,10 @@ export class StatsOverview {
         </div>
 
         <div class="stat-card">
-          <div class="stat-icon">⏱️</div>
+          <div class="stat-icon">RPM</div>
           <div class="stat-data">
-            <h4>Régime max record</h4>
-            <div class="stat-value">${stats.highestRpmEngine ? `${formatNumber(stats.highestRpmEngine.maxRpm)} tr/min` : '-'}</div>
+            <h4>Régime record</h4>
+            <div class="stat-value">${stats.highestRpmEngine ? `${formatNumber(stats.highestRpmEngine.maxRpm)}` : '-'}</div>
             <div class="stat-sub">${stats.highestRpmEngine ? stats.highestRpmEngine.name : ''}</div>
           </div>
         </div>

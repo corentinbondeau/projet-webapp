@@ -18,15 +18,17 @@ export class FilterBar {
     const { configuration, fuel, aspiration, onlyFavorites, sortBy, sortOrder } = store.state.filters;
 
     const configs = [
-      { id: 'ALL', label: 'Toutes les architectures' },
+      { id: 'ALL', label: 'Toutes' },
       { id: 'V8', label: 'V8' },
-      { id: 'V12', label: 'V12' },
       { id: 'V10', label: 'V10' },
-      { id: 'Flat-6', label: 'Flat-6 Boxer' },
-      { id: '6 en ligne', label: '6 en ligne (L6)' },
-      { id: '4 en ligne', label: '4 en ligne (L4)' },
-      { id: 'W16', label: 'W16 Quad-Turbo' },
-      { id: 'Rotatif', label: 'Wankel Rotatif' },
+      { id: 'V12', label: 'V12' },
+      { id: 'V6', label: 'V6' },
+      { id: 'Flat-6', label: 'Flat-6' },
+      { id: '6 en ligne', label: 'L6' },
+      { id: '5 en ligne', label: 'L5' },
+      { id: '4 en ligne', label: 'L4' },
+      { id: 'W16', label: 'W16' },
+      { id: 'Rotatif', label: 'Rotatif' },
       { id: 'Électrique', label: 'Électrique' }
     ];
 

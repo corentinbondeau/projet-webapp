@@ -1,40 +1,55 @@
-import { Engine, EngineConfiguration } from '../types/engine';
+import { Engine } from '../types/engine';
+
+type SampleKey =
+  | 'v8'
+  | 'v12'
+  | 'flat6'
+  | 'sports'
+  | 'muscle'
+  | 'idle'
+  | 'high'
+  | 'start'
+  | 'bmw'
+  | 'a45'
+  | 'bugatti';
+
+const SAMPLE_FILES: Record<SampleKey, string> = {
+  v8: '/sounds/v8-rev.mp3',
+  v12: '/sounds/ferrari-v12.mp3',
+  flat6: '/sounds/porsche-flat6.mp3',
+  sports: '/sounds/sports-rev.mp3',
+  muscle: '/sounds/muscle-rev.mp3',
+  idle: '/sounds/idle-loop.mp3',
+  high: '/sounds/high-rev.mp3',
+  start: '/sounds/car-start.mp3',
+  // samples custom (fichiers fournis)
+  bmw: '/sounds/bmw.mp3',
+  a45: '/sounds/a45.mp3',
+  bugatti: '/sounds/bugatti-chiron.mp3'
+};
 
 /**
- * simulateur sonore moteurs via web audio.
- * oscillateurs + filtre + un peu de saturation douce.
+ * sons réels (samples) joués via web audio api.
+ * playbackRate suit le régime (rpm).
  */
 export class AudioEngineSimulator {
   private static ctx: AudioContext | null = null;
   private static masterGain: GainNode | null = null;
-  private static compressor: DynamicsCompressorNode | null = null;
+  private static filter: BiquadFilterNode | null = null;
 
-  // oscillateurs
-  private static osc1: OscillatorNode | null = null; // fondamentale
-  private static osc2: OscillatorNode | null = null; // harmonique 2
-  private static osc3: OscillatorNode | null = null; // basse
-  private static osc4: OscillatorNode | null = null; // timbre
-  private static lfo: OscillatorNode | null = null;  // lFO de battement syncopé (5-cylindres)
-  private static lfoGain: GainNode | null = null;
+  private static loopSource: AudioBufferSourceNode | null = null;
+  private static loopGain: GainNode | null = null;
+  private static oneShotSource: AudioBufferSourceNode | null = null;
 
-  // turbo
-  private static turboNoise: AudioBufferSourceNode | null = null;
-  private static turboFilter: BiquadFilterNode | null = null;
-  private static turboGain: GainNode | null = null;
-
-  // filtres échappement
-  private static exhaustFilter: BiquadFilterNode | null = null;
-  private static waveShaper: WaveShaperNode | null = null;
-
-  // état
-  private static isPlaying: boolean = false;
+  private static bufferCache = new Map<string, AudioBuffer>();
+  private static isPlaying = false;
   private static currentEngine: Partial<Engine> | null = null;
-  private static currentRpm: number = 800;
-  private static idleRpm: number = 800;
-  private static maxRpm: number = 8500;
-  private static isElectric: boolean = false;
-  private static isTurbo: boolean = false;
-  private static config: EngineConfiguration = 'V8';
+  private static currentRpm = 800;
+  private static idleRpm = 800;
+  private static maxRpm = 8500;
+  private static isElectric = false;
+  private static sampleKey: SampleKey = 'idle';
+  private static revTimer: ReturnType<typeof setInterval> | null = null;
 
   private static initContext() {
     if (!this.ctx) {
@@ -42,35 +57,70 @@ export class AudioEngineSimulator {
       this.ctx = new AudioCtx();
     }
     if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      void this.ctx.resume();
     }
   }
 
-  // courbe tanh pour la saturation
-  private static makeSoftSaturationCurve(): Float32Array {
-    const nSamples = 44100;
-    const curve = new Float32Array(nSamples);
-    const drive = 1.15;
-    for (let i = 0; i < nSamples; ++i) {
-      const x = (i * 2) / nSamples - 1;
-      curve[i] = Math.tanh(x * drive) / Math.tanh(drive);
+  private static pickSample(engine: Partial<Engine>): SampleKey {
+    const cfg = engine.configuration || 'V8';
+    const name = `${engine.name || ''} ${engine.manufacturer || ''}`.toLowerCase();
+
+    // samples dédiés fournis
+    if (name.includes('bmw') || name.includes('m5') || cfg === 'V10') return 'bmw';
+    if (name.includes('a 45') || name.includes('a45') || (name.includes('mercedes') && name.includes('amg') && cfg === '4 en ligne')) {
+      return 'a45';
     }
-    return curve;
+    if (name.includes('bugatti') || name.includes('chiron') || cfg === 'W16') return 'bugatti';
+
+    if (cfg === 'Électrique' || engine.fuel === 'Électrique' || name.includes('tesla')) return 'high';
+    if (cfg === 'V12' || name.includes('ferrari') || name.includes('lamborghini')) return 'v12';
+    if (cfg === 'Flat-6' || name.includes('porsche')) return 'flat6';
+    if (cfg === 'V8' || name.includes('corvette') || name.includes('mustang')) return 'v8';
+    if (cfg === 'Rotatif' || name.includes('rx-8') || name.includes('mazda')) return 'high';
+    if (cfg === 'V6' || name.includes('gt-r') || name.includes('nissan')) return 'sports';
+    if (cfg === '5 en ligne' || cfg === '6 en ligne' || cfg === '4 en ligne' || name.includes('supra') || name.includes('audi')) {
+      return 'muscle';
+    }
+    return 'idle';
   }
 
-  // bruit blanc turbo
-  private static createNoiseBuffer(): AudioBuffer | null {
-    if (!this.ctx) return null;
-    const bufferSize = this.ctx.sampleRate * 2;
-    const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      output[i] = Math.random() * 2 - 1;
+  private static async loadBuffer(url: string, maxSeconds = 10): Promise<AudioBuffer> {
+    this.initContext();
+    if (!this.ctx) throw new Error('no audio context');
+
+    const cached = this.bufferCache.get(url);
+    if (cached) return cached;
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`sound fetch failed: ${url}`);
+    const raw = await res.arrayBuffer();
+    const decoded = await this.ctx.decodeAudioData(raw.slice(0));
+
+    // coupe les longs samples (ex: ferrari ~1min) pour charger plus vite
+    const maxFrames = Math.min(decoded.length, Math.floor(decoded.sampleRate * maxSeconds));
+    if (maxFrames >= decoded.length) {
+      this.bufferCache.set(url, decoded);
+      return decoded;
     }
-    return noiseBuffer;
+
+    const sliced = this.ctx.createBuffer(decoded.numberOfChannels, maxFrames, decoded.sampleRate);
+    for (let ch = 0; ch < decoded.numberOfChannels; ch++) {
+      sliced.copyToChannel(decoded.getChannelData(ch).subarray(0, maxFrames), ch);
+    }
+    this.bufferCache.set(url, sliced);
+    return sliced;
   }
 
-  // démarre le son
+  private static rpmToRate(rpm: number): number {
+    const ratio = Math.max(0, Math.min(1, (rpm - this.idleRpm) / Math.max(1, this.maxRpm - this.idleRpm)));
+    if (this.isElectric) {
+      // whine plus aigu à haut régime
+      return 0.55 + ratio * 1.35;
+    }
+    // ralenti un peu grave, pleine charge plus aigu
+    return 0.72 + ratio * 0.85;
+  }
+
   public static start(engineOrPitch: Engine | number = 500, maxRpmFallback: number = 8500) {
     this.initContext();
     if (!this.ctx) return;
@@ -91,422 +141,201 @@ export class AudioEngineSimulator {
     }
 
     this.currentEngine = engine;
-    this.config = engine.configuration || 'V8';
     this.isElectric = engine.configuration === 'Électrique' || engine.fuel === 'Électrique';
-    this.isTurbo = ['Turbo', 'Bi-Turbo', 'Quad-Turbo'].includes(engine.aspiration || '');
     this.maxRpm = engine.maxRpm || 8500;
     this.idleRpm = this.isElectric ? 0 : Math.round(this.maxRpm * 0.11);
     this.currentRpm = this.idleRpm;
-
-    const now = this.ctx.currentTime;
-
-    // compresseur
-    this.compressor = this.ctx.createDynamicsCompressor();
-    this.compressor.threshold.setValueAtTime(-18, now);
-    this.compressor.knee.setValueAtTime(12, now);
-    this.compressor.ratio.setValueAtTime(8, now);
-    this.compressor.attack.setValueAtTime(0.005, now);
-    this.compressor.release.setValueAtTime(0.12, now);
-
-    // master gain
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.001, now);
-    this.masterGain.gain.exponentialRampToValueAtTime(0.16, now + 0.12);
-
-    // waveshaper
-    this.waveShaper = this.ctx.createWaveShaper();
-    this.waveShaper.curve = this.makeSoftSaturationCurve() as any;
-    this.waveShaper.oversample = '4x';
-
-    // filtre passe-bas
-    this.exhaustFilter = this.ctx.createBiquadFilter();
-    this.exhaustFilter.type = 'lowpass';
-    this.exhaustFilter.frequency.setValueAtTime(450, now);
-    this.exhaustFilter.Q.setValueAtTime(1.2, now);
-
-    // oscillateurs selon l'archi
-    this.setupOscillators();
-
-    // turbo si besoin
-    if (this.isTurbo && !this.isElectric) {
-      this.setupTurbo();
-    }
-
-    // branchements
-    this.waveShaper.connect(this.exhaustFilter);
-    this.exhaustFilter.connect(this.compressor);
-    this.compressor.connect(this.masterGain);
-    this.masterGain.connect(this.ctx.destination);
-
-    this.updateFrequency();
+    this.sampleKey = this.pickSample(engine);
     this.isPlaying = true;
+
+    void this.bootGraph();
   }
 
-  // setup des oscillateurs
-  private static setupOscillators() {
-    if (!this.ctx || !this.waveShaper) return;
-
-    this.osc1 = this.ctx.createOscillator();
-    this.osc2 = this.ctx.createOscillator();
-    this.osc3 = this.ctx.createOscillator();
-    this.osc4 = this.ctx.createOscillator();
-
-    const g1 = this.ctx.createGain();
-    const g2 = this.ctx.createGain();
-    const g3 = this.ctx.createGain();
-    const g4 = this.ctx.createGain();
-
-    if (this.isElectric) {
-      // électrique
-      this.osc1.type = 'sine';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sine';
-      this.osc4.type = 'sine';
-
-      g1.gain.value = 0.22;
-      g2.gain.value = 0.10;
-      g3.gain.value = 0.08;
-      g4.gain.value = 0.05;
-    } else if (this.config === 'Rotatif') {
-      // rotatif (wankel)
-      this.osc1.type = 'sawtooth';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sine';
-      this.osc4.type = 'triangle';
-
-      g1.gain.value = 0.18;
-      g2.gain.value = 0.12;
-      g3.gain.value = 0.10;
-      g4.gain.value = 0.06;
-    } else if (this.config === 'V12') {
-      // v12
-      this.osc1.type = 'sawtooth';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sine';
-      this.osc4.type = 'sawtooth';
-
-      g1.gain.value = 0.16;
-      g2.gain.value = 0.14;
-      g3.gain.value = 0.12;
-      g4.gain.value = 0.06;
-    } else if (this.config === 'V10') {
-      // v10
-      this.osc1.type = 'sawtooth';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sawtooth';
-      this.osc4.type = 'sine';
-
-      g1.gain.value = 0.18;
-      g2.gain.value = 0.12;
-      g3.gain.value = 0.10;
-      g4.gain.value = 0.05;
-    } else if (this.config === '5 en ligne') {
-      // 5 en ligne
-      this.osc1.type = 'sawtooth';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sawtooth';
-      this.osc4.type = 'sine';
-
-      g1.gain.value = 0.18;
-      g2.gain.value = 0.12;
-      g3.gain.value = 0.10;
-      g4.gain.value = 0.05;
-
-      // battement 5 cyl
-      this.lfo = this.ctx.createOscillator();
-      this.lfo.type = 'sine';
-      this.lfoGain = this.ctx.createGain();
-      this.lfoGain.gain.value = 2.5;
-      this.lfo.connect(this.lfoGain);
-      this.lfoGain.connect(this.osc1.frequency);
-      this.lfo.start();
-    } else if (this.config === 'Flat-6') {
-      // flat-6
-      this.osc1.type = 'sawtooth';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sine';
-      this.osc4.type = 'sawtooth';
-
-      g1.gain.value = 0.18;
-      g2.gain.value = 0.12;
-      g3.gain.value = 0.12;
-      g4.gain.value = 0.06;
-    } else if (this.config === 'W16') {
-      // w16
-      this.osc1.type = 'sawtooth';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sine';
-      this.osc4.type = 'sine';
-
-      g1.gain.value = 0.15;
-      g2.gain.value = 0.10;
-      g3.gain.value = 0.18; // sub-bass rond
-      g4.gain.value = 0.04;
-    } else {
-      // v8 / i6 / i4
-      this.osc1.type = 'sawtooth';
-      this.osc2.type = 'triangle';
-      this.osc3.type = 'sine';
-      this.osc4.type = 'triangle';
-
-      g1.gain.value = 0.18;
-      g2.gain.value = 0.12;
-      g3.gain.value = 0.12;
-      g4.gain.value = 0.05;
-    }
-
-    this.osc1.connect(g1);
-    this.osc2.connect(g2);
-    this.osc3.connect(g3);
-    this.osc4.connect(g4);
-
-    g1.connect(this.waveShaper);
-    g2.connect(this.waveShaper);
-    g3.connect(this.waveShaper);
-    g4.connect(this.waveShaper);
-
-    this.osc1.start();
-    this.osc2.start();
-    this.osc3.start();
-    this.osc4.start();
-  }
-
-  // setup turbo
-  private static setupTurbo() {
-    if (!this.ctx || !this.compressor) return;
-
-    const noiseBuffer = this.createNoiseBuffer();
-    if (!noiseBuffer) return;
-
-    this.turboNoise = this.ctx.createBufferSource();
-    this.turboNoise.buffer = noiseBuffer;
-    this.turboNoise.loop = true;
-
-    this.turboFilter = this.ctx.createBiquadFilter();
-    this.turboFilter.type = 'bandpass';
-    this.turboFilter.frequency.setValueAtTime(2200, this.ctx.currentTime);
-    this.turboFilter.Q.setValueAtTime(3.0, this.ctx.currentTime);
-
-    this.turboGain = this.ctx.createGain();
-    this.turboGain.gain.setValueAtTime(0.001, this.ctx.currentTime);
-
-    this.turboNoise.connect(this.turboFilter);
-    this.turboFilter.connect(this.turboGain);
-    this.turboGain.connect(this.compressor);
-
-    this.turboNoise.start();
-  }
-
-  // blow-off au lever de pied
-  private static triggerBlowOffValve() {
-    if (!this.ctx || !this.isTurbo || this.isElectric || !this.compressor) return;
-
+  private static async bootGraph() {
+    if (!this.ctx || !this.isPlaying) return;
     const now = this.ctx.currentTime;
-    const noiseBuffer = this.createNoiseBuffer();
-    if (!noiseBuffer) return;
 
-    const bovSource = this.ctx.createBufferSource();
-    bovSource.buffer = noiseBuffer;
+    try {
+      const loopUrl = SAMPLE_FILES[this.sampleKey] || SAMPLE_FILES.idle;
+      const startUrl = this.isElectric ? SAMPLE_FILES.high : SAMPLE_FILES.start;
 
-    const bovFilter = this.ctx.createBiquadFilter();
-    bovFilter.type = 'bandpass';
-    bovFilter.frequency.setValueAtTime(3000, now);
-    bovFilter.Q.setValueAtTime(2.5, now);
+      const [loopBuffer, startBuffer] = await Promise.all([
+        this.loadBuffer(loopUrl, this.isCustomSample(this.sampleKey) ? 20 : (this.sampleKey === 'v12' ? 12 : 8)),
+        this.loadBuffer(startUrl, 4).catch(() => null)
+      ]);
 
-    const bovGain = this.ctx.createGain();
-    bovGain.gain.setValueAtTime(0.08, now);
-    bovGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+      if (!this.isPlaying || !this.ctx) return;
 
-    bovSource.connect(bovFilter);
-    bovFilter.connect(bovGain);
-    bovGain.connect(this.compressor);
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.setValueAtTime(0.001, now);
+      this.masterGain.gain.exponentialRampToValueAtTime(0.55, now + 0.2);
 
-    bovSource.start(now);
-    bovSource.stop(now + 0.3);
-  }
+      this.filter = this.ctx.createBiquadFilter();
+      this.filter.type = 'lowpass';
+      this.filter.frequency.setValueAtTime(2800, now);
+      this.filter.Q.setValueAtTime(0.7, now);
 
-  // ordre d'allumage
-  private static getPulsesPerRevolution(config: EngineConfiguration): number {
-    switch (config) {
-      case '4 en ligne':
-      case 'Flat-4':
-        return 2.0;
-      case '5 en ligne':
-        return 2.5;
-      case '6 en ligne':
-      case 'Flat-6':
-      case 'V6':
-        return 3.0;
-      case 'V8':
-        return 4.0;
-      case 'V10':
-        return 5.0;
-      case 'V12':
-        return 6.0;
-      case 'W16':
-        return 8.0;
-      case 'Rotatif':
-        return 3.0;
-      default:
-        return 3.0;
-    }
-  }
+      this.loopGain = this.ctx.createGain();
+      this.loopGain.gain.setValueAtTime(0.9, now);
 
-  // set rpm
-  public static setRpm(rpm: number) {
-    this.currentRpm = Math.max(0, Math.min(rpm, this.maxRpm));
-    if (this.isPlaying) {
-      this.updateFrequency();
-    }
-  }
+      this.loopSource = this.ctx.createBufferSource();
+      this.loopSource.buffer = loopBuffer;
+      this.loopSource.loop = true;
+      this.loopSource.playbackRate.setValueAtTime(this.rpmToRate(this.currentRpm), now);
 
-  // update fréquences / filtres
-  private static updateFrequency() {
-    if (!this.ctx || !this.osc1 || !this.osc2 || !this.osc3 || !this.osc4 || !this.exhaustFilter) return;
+      this.loopSource.connect(this.loopGain);
+      this.loopGain.connect(this.filter);
+      this.filter.connect(this.masterGain);
+      this.masterGain.connect(this.ctx.destination);
 
-    const now = this.ctx.currentTime;
-    const rpm = this.currentRpm;
-    const rpmRatio = Math.max(0.01, rpm / this.maxRpm);
+      this.loopSource.start(now);
 
-    if (this.isElectric) {
-      // électrique
-      const inverterFreq = 180 + (rpm * 0.12);
-      this.osc1.frequency.setTargetAtTime(inverterFreq, now, 0.04);
-      this.osc2.frequency.setTargetAtTime(inverterFreq * 2.0, now, 0.04);
-      this.osc3.frequency.setTargetAtTime(inverterFreq * 0.5, now, 0.04);
-      this.osc4.frequency.setTargetAtTime(inverterFreq * 3.0, now, 0.04);
-
-      const filterFreq = 400 + (rpmRatio * 3200);
-      this.exhaustFilter.frequency.setTargetAtTime(filterFreq, now, 0.04);
-      return;
-    }
-
-    // thermiques / rotatifs
-    const pulsesPerRev = this.getPulsesPerRevolution(this.config);
-    const baseFiringFreq = Math.max(22, (rpm / 60) * pulsesPerRev);
-
-    if (this.config === 'V12') {
-      this.osc1.frequency.setTargetAtTime(baseFiringFreq, now, 0.035);
-      this.osc2.frequency.setTargetAtTime(baseFiringFreq * 2.0, now, 0.035);
-      this.osc3.frequency.setTargetAtTime(baseFiringFreq * 0.5, now, 0.035);
-      this.osc4.frequency.setTargetAtTime(baseFiringFreq * 3.0, now, 0.035);
-    } else if (this.config === 'V10') {
-      this.osc1.frequency.setTargetAtTime(baseFiringFreq, now, 0.035);
-      this.osc2.frequency.setTargetAtTime(baseFiringFreq * 2.0, now, 0.035);
-      this.osc3.frequency.setTargetAtTime(baseFiringFreq * 0.5, now, 0.035);
-      this.osc4.frequency.setTargetAtTime(baseFiringFreq * 2.5, now, 0.035);
-    } else if (this.config === '5 en ligne') {
-      this.osc1.frequency.setTargetAtTime(baseFiringFreq, now, 0.035);
-      this.osc2.frequency.setTargetAtTime(baseFiringFreq * 1.5, now, 0.035);
-      this.osc3.frequency.setTargetAtTime(baseFiringFreq * 0.5, now, 0.035);
-      this.osc4.frequency.setTargetAtTime(baseFiringFreq * 2.5, now, 0.035);
-
-      if (this.lfo) {
-        this.lfo.frequency.setTargetAtTime(rpm / 140, now, 0.04);
+      // petit bruit de démarreur au contact (sauf électrique / samples custom)
+      if (startBuffer && !this.isElectric && !this.isCustomSample(this.sampleKey)) {
+        this.oneShotSource = this.ctx.createBufferSource();
+        this.oneShotSource.buffer = startBuffer;
+        const g = this.ctx.createGain();
+        g.gain.setValueAtTime(0.35, now);
+        g.gain.exponentialRampToValueAtTime(0.01, now + 1.2);
+        this.oneShotSource.connect(g);
+        g.connect(this.masterGain);
+        this.oneShotSource.start(now);
       }
-    } else if (this.config === 'Flat-6') {
-      this.osc1.frequency.setTargetAtTime(baseFiringFreq, now, 0.035);
-      this.osc2.frequency.setTargetAtTime(baseFiringFreq * 2.0, now, 0.035);
-      this.osc3.frequency.setTargetAtTime(baseFiringFreq * 0.5, now, 0.035);
-      this.osc4.frequency.setTargetAtTime(baseFiringFreq * 3.0, now, 0.035);
-    } else {
-      this.osc1.frequency.setTargetAtTime(baseFiringFreq, now, 0.035);
-      this.osc2.frequency.setTargetAtTime(baseFiringFreq * 2.0, now, 0.035);
-      this.osc3.frequency.setTargetAtTime(baseFiringFreq * 0.5, now, 0.035);
-      this.osc4.frequency.setTargetAtTime(baseFiringFreq * 3.0, now, 0.035);
-    }
 
-    // filtre progressif
-    const exhaustCutoff = 220 + (rpmRatio * 1600);
-    this.exhaustFilter.frequency.setTargetAtTime(exhaustCutoff, now, 0.04);
-
-    // turbo
-    if (this.isTurbo && this.turboFilter && this.turboGain) {
-      const turboFreq = 1800 + (rpmRatio * 4200);
-      this.turboFilter.frequency.setTargetAtTime(turboFreq, now, 0.05);
-
-      const turboVolume = Math.pow(rpmRatio, 2.0) * 0.06;
-      this.turboGain.gain.setTargetAtTime(turboVolume, now, 0.05);
+      this.applyRpmAudio(this.currentRpm);
+    } catch (err) {
+      console.error('impossible de charger le sample moteur:', err);
+      this.isPlaying = false;
     }
   }
 
-  // blip d'accélérateur
+  private static isCustomSample(key: SampleKey): boolean {
+    return key === 'bmw' || key === 'a45' || key === 'bugatti';
+  }
+
+  public static setRpm(rpm: number) {
+    this.currentRpm = Math.max(this.idleRpm, Math.min(this.maxRpm, rpm));
+    this.applyRpmAudio(this.currentRpm);
+  }
+
+  private static applyRpmAudio(rpm: number) {
+    if (!this.ctx || !this.isPlaying) return;
+    const now = this.ctx.currentTime;
+    const rate = this.rpmToRate(rpm);
+    const rpmRatio = Math.max(0, Math.min(1, (rpm - this.idleRpm) / Math.max(1, this.maxRpm - this.idleRpm)));
+
+    if (this.loopSource) {
+      this.loopSource.playbackRate.setTargetAtTime(rate, now, 0.08);
+    }
+    if (this.filter) {
+      const cutoff = 1200 + rpmRatio * 4200;
+      this.filter.frequency.setTargetAtTime(cutoff, now, 0.08);
+    }
+    if (this.loopGain) {
+      const vol = 0.55 + rpmRatio * 0.45;
+      this.loopGain.gain.setTargetAtTime(vol, now, 0.08);
+    }
+  }
+
   public static revUp(callbackRpm?: (rpm: number) => void) {
     if (!this.isPlaying) return;
+    if (this.revTimer) clearInterval(this.revTimer);
+
     const targetRpm = Math.round(this.maxRpm * 0.94);
     const idleRpm = this.idleRpm;
-
     let progress = 0;
-    const interval = setInterval(() => {
+
+    // one-shot du sample "rev" par-dessus la boucle
+    void this.playOneShotRev();
+
+    this.revTimer = setInterval(() => {
       progress += 0.05;
       if (progress <= 0.45) {
-        // montée
         const current = idleRpm + (targetRpm - idleRpm) * Math.sin((progress / 0.45) * (Math.PI / 2));
         this.setRpm(current);
         callbackRpm?.(current);
       } else if (progress <= 0.55) {
-        // rupteur
         const current = targetRpm + (Math.random() - 0.5) * (this.maxRpm * 0.02);
         this.setRpm(current);
         callbackRpm?.(current);
-      } else if (progress <= 1.0) {
-        // descente
-        if (progress === 0.60 && this.isTurbo) {
-          this.triggerBlowOffValve();
-        }
+      } else if (progress <= 1) {
         const decProgress = (progress - 0.55) / 0.45;
         const current = targetRpm - (targetRpm - idleRpm) * Math.pow(decProgress, 1.6);
         this.setRpm(current);
         callbackRpm?.(current);
       } else {
-        clearInterval(interval);
+        if (this.revTimer) clearInterval(this.revTimer);
+        this.revTimer = null;
         this.setRpm(idleRpm);
         callbackRpm?.(idleRpm);
       }
-    }, 25);
+    }, 50);
   }
 
-  // stop
-  public static stop() {
-    if (!this.isPlaying || !this.ctx || !this.masterGain) return;
-
+  private static async playOneShotRev() {
+    if (!this.ctx || !this.masterGain) return;
     try {
+      // pour un coup d'accéléro, on préfère le sample dédié si dispo
+      const key: SampleKey = this.isCustomSample(this.sampleKey)
+        ? this.sampleKey
+        : this.sampleKey === 'idle' ? 'muscle'
+        : this.sampleKey === 'v12' ? 'v12'
+        : this.sampleKey === 'flat6' ? 'flat6'
+        : this.sampleKey === 'v8' ? 'v8'
+        : this.sampleKey;
+
+      const buffer = await this.loadBuffer(SAMPLE_FILES[key], this.isCustomSample(key) ? 20 : 6);
+      if (!this.ctx || !this.masterGain || !this.isPlaying) return;
+
+      const src = this.ctx.createBufferSource();
+      src.buffer = buffer;
+      src.playbackRate.value = 1;
+      const g = this.ctx.createGain();
       const now = this.ctx.currentTime;
-      this.masterGain.gain.setValueAtTime(this.masterGain.gain.value, now);
-      this.masterGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
-
-      setTimeout(() => {
-        try {
-          this.osc1?.stop();
-          this.osc2?.stop();
-          this.osc3?.stop();
-          this.osc4?.stop();
-          this.lfo?.stop();
-          this.turboNoise?.stop();
-
-          this.osc1?.disconnect();
-          this.osc2?.disconnect();
-          this.osc3?.disconnect();
-          this.osc4?.disconnect();
-          this.lfo?.disconnect();
-          this.lfoGain?.disconnect();
-          this.turboNoise?.disconnect();
-          this.turboFilter?.disconnect();
-          this.turboGain?.disconnect();
-          this.waveShaper?.disconnect();
-          this.exhaustFilter?.disconnect();
-          this.compressor?.disconnect();
-          this.masterGain?.disconnect();
-        } catch {
-          // déjà stop
-        }
-        this.isPlaying = false;
-        this.currentEngine = null;
-      }, 130);
+      g.gain.setValueAtTime(0.001, now);
+      g.gain.exponentialRampToValueAtTime(0.7, now + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.01, now + Math.min(5.5, buffer.duration));
+      src.connect(g);
+      g.connect(this.masterGain);
+      src.start(now);
+      src.stop(now + Math.min(5.5, buffer.duration));
     } catch {
-      this.isPlaying = false;
-      this.currentEngine = null;
+      // silencieux si le sample one-shot échoue
     }
+  }
+
+  public static stop() {
+    if (this.revTimer) {
+      clearInterval(this.revTimer);
+      this.revTimer = null;
+    }
+
+    const now = this.ctx?.currentTime ?? 0;
+    try {
+      if (this.masterGain) {
+        this.masterGain.gain.cancelScheduledValues(now);
+        this.masterGain.gain.setTargetAtTime(0.001, now, 0.05);
+      }
+    } catch {
+      // déjà stop
+    }
+
+    window.setTimeout(() => {
+      try { this.loopSource?.stop(); } catch { /* ignore */ }
+      try { this.oneShotSource?.stop(); } catch { /* ignore */ }
+      this.loopSource?.disconnect();
+      this.oneShotSource?.disconnect();
+      this.loopGain?.disconnect();
+      this.filter?.disconnect();
+      this.masterGain?.disconnect();
+
+      this.loopSource = null;
+      this.oneShotSource = null;
+      this.loopGain = null;
+      this.filter = null;
+      this.masterGain = null;
+      this.isPlaying = false;
+    }, 120);
   }
 
   public static getActiveStatus(): boolean {
