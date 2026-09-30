@@ -4,9 +4,7 @@ import { StorageService } from '../state/storage';
 export class EngineService {
   private static DATA_URL = '/data/engines.json';
 
-  /**
-   * Charge les moteurs depuis le LocalStorage si disponibles, sinon effectue un Fetch
-   */
+  // localstorage sinon fetch
   static async loadInitialEngines(): Promise<Engine[]> {
     const saved = StorageService.getEngines();
     if (saved && saved.length > 0) {
@@ -16,9 +14,7 @@ export class EngineService {
     return this.fetchFromApi();
   }
 
-  /**
-   * Effectue un appel Fetch vers le fichier JSON ou l'API REST
-   */
+  // fetch du json
   static async fetchFromApi(): Promise<Engine[]> {
     try {
       const response = await fetch(this.DATA_URL);
@@ -27,7 +23,7 @@ export class EngineService {
       }
       const data: Engine[] = await response.json();
       
-      // Sauvegarde initiale dans LocalStorage
+      // save
       StorageService.saveEngines(data);
       return data;
     } catch (error) {
@@ -36,9 +32,7 @@ export class EngineService {
     }
   }
 
-  /**
-   * Réinitialise les données en re-téléchargeant les moteurs par défaut
-   */
+  // reset + re-fetch
   static async resetToDefault(): Promise<Engine[]> {
     StorageService.clearStorage();
     return this.fetchFromApi();

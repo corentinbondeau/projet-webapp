@@ -180,7 +180,7 @@ export class EngineDetailModal {
     const e = this.currentEngine;
     const idleRpm = Math.round(e.maxRpm * 0.12);
 
-    // Boutons de fermeture
+    // close
     this.backdrop.querySelector('#btn-close-detail')?.addEventListener('click', () => this.close());
     this.backdrop.querySelector('#btn-close-detail-footer')?.addEventListener('click', () => this.close());
 
@@ -188,14 +188,14 @@ export class EngineDetailModal {
       if (event.target === this.backdrop) this.close();
     });
 
-    // Passer en mode édition
+    // edit
     this.backdrop.querySelector('#btn-edit-from-detail')?.addEventListener('click', () => {
       const id = e.id;
       this.close();
       document.dispatchEvent(new CustomEvent('open-engine-form', { detail: { mode: 'edit', engineId: id } }));
     });
 
-    // Contrôles Audio & Tachomètre
+    // audio / tacho
     const audioToggleBtn = this.backdrop.querySelector('#btn-audio-toggle') as HTMLButtonElement | null;
     const audioText = this.backdrop.querySelector('#btn-audio-text');
     const revBtn = this.backdrop.querySelector('#btn-audio-rev') as HTMLButtonElement | null;

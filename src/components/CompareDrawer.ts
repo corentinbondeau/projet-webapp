@@ -54,7 +54,7 @@ export class CompareDrawer {
   }
 
   private attachDrawerEvents(): void {
-    // Retirer un élément individuel
+    // retirer un
     this.drawerElement.querySelectorAll('[data-remove]').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-remove');
@@ -62,13 +62,13 @@ export class CompareDrawer {
       });
     });
 
-    // Effacer tout
+    // clear
     this.drawerElement.querySelector('#btn-clear-compare')?.addEventListener('click', () => {
       store.clearCompare();
       Toast.show('Comparateur réinitialisé', 'info');
     });
 
-    // Lancer la comparaison modale
+    // ouvrir compare
     this.drawerElement.querySelector('#btn-launch-compare')?.addEventListener('click', () => {
       this.openCompareModal();
     });

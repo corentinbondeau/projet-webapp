@@ -1,6 +1,4 @@
-/**
- * Utilitaires pour la manipulation pure et sécurisée de l'API DOM
- */
+/* petits helpers DOM */
 
 export function createElement<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -32,18 +30,14 @@ export function createElement<K extends keyof HTMLElementTagNameMap>(
   return el;
 }
 
-/**
- * Nettoie le contenu d'un élément DOM
- */
+/* vide un élément */
 export function emptyElement(el: HTMLElement): void {
   while (el.firstChild) {
     el.removeChild(el.firstChild);
   }
 }
 
-/**
- * Délégation d'événements DOM sécurisée
- */
+/* délégation d'events */
 export function delegateEvent(
   parent: HTMLElement | Document,
   eventType: string,
@@ -63,18 +57,14 @@ export function delegateEvent(
   return () => parent.removeEventListener(eventType, listener);
 }
 
-/**
- * Échappement HTML contre les injections XSS
- */
+/* escape html (anti-xss) */
 export function escapeHtml(str: string): string {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
 
-/**
- * Formateur de nombres (milliers avec espaces)
- */
+/* format nombre fr */
 export function formatNumber(num: number): string {
   return new Intl.NumberFormat('fr-FR').format(num);
 }

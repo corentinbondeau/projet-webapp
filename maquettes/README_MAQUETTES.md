@@ -1,35 +1,24 @@
-# Maquettes et Guide de Conception Graphique UX/UI — ApexEngine
+# Maquettes — ApexEngine
 
-Ce dossier contient les éléments de conception et les maquettes vectorielles de l'application **ApexEngine**, conçue pour l'évaluation du projet de Web Avancé.
+Wireframes SVG pour le projet web AP4.
 
----
+## Contenu
 
-## 1. Fichiers Disponibles
+`wireframes.svg` regroupe :
+- vue desktop (nav, stats, filtres, grille de cartes)
+- vue mobile (layout compact, drawer)
+- modale détail + tachomètre audio
+- tiroir / modale de comparaison (2–3 moteurs)
 
-- **`wireframes.svg`** : Maquette vectorielle haute fidélité regroupant :
-  1. **Vue Desktop Principale (Dark Mode)** : Barre de navigation, tableau de bord de statistiques en direct, filtres par pilules/selects, grille de cartes de moteurs avec actions interactives.
-  2. **Vue Mobile Responsive** : Adaptation sur écran smartphone avec drawer, disposition compacte et navigation optimisée au pouce.
-  3. **Modale Fiche Détaillée & Tachomètre Audio** : Compte-tours interactif relié à la Web Audio API pour jouer le son de chaque moteur.
-  4. **Tiroir & Modale de Comparaison Face-à-Face** : Comparaison technique de 2 à 3 moteurs simultanément.
+## Couleurs
 
----
+Les couleurs côté code ont un peu bougé depuis (accents vert/bleu), mais l'idée de base :
 
-## 2. Charte Graphique & Design Tokens
+- rouge sportif `#ff3838`
+- orange accents `#ff9f1a`
+- cyan `#00d2d3`
+- fond sombre `#0d0f12` / clair `#f1f5f9`
 
-### Palette de Couleurs
-- **Racing Red (Primaire)** : `#ff3838` — Dynamisme automobile, puissance et sportivité.
-- **Amber Orange (Secondaire)** : `#ff9f1a` — Éléments d'accentuation, badges et likes.
-- **Cyan Turbo** : `#00d2d3` — Suralimentation, surpresseurs et haut régime.
-- **Carbon Dark (Background Sombre)** : `#0d0f12` et surfaces `#16191f`.
-- **Pure White (Background Clair)** : `#f1f5f9` et surfaces `#ffffff`.
+## Typo
 
-### Typographie
-- **Titres & Identité** : Inter / Sans-serif moderne (800 / 900 extra-bold).
-- **Chiffres du Compte-tours (RPM)** : JetBrains Mono / Monospace à chasse fixe pour éviter les décalages visuels lors de l'accélération.
-
----
-
-## 3. Démarche Ergonomique
-- **Zéro Rechargement de Page (SPA fluide)** grâce à l'interception des mutations d'état par `Proxy`.
-- **Validation en direct (Real-time form validation)** avec affichage contextuel des erreurs.
-- **Micro-interactions sonores et visuelles** : Le compte-tours interactif et le synthétiseur audio Web Audio API permettent à l'évaluateur de tester une fonctionnalité originale et ludique.
+Sans-serif pour l'UI, monospace pour les RPM (histoire que les chiffres ne sautent pas pendant l'accélération).

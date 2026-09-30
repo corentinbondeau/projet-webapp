@@ -7,9 +7,7 @@ const STORAGE_KEYS = {
 };
 
 export class StorageService {
-  /**
-   * Sauvegarde la liste des moteurs dans le LocalStorage
-   */
+  // save moteurs
   static saveEngines(engines: Engine[]): void {
     try {
       localStorage.setItem(STORAGE_KEYS.ENGINES, JSON.stringify(engines));
@@ -18,9 +16,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Récupère la liste des moteurs depuis le LocalStorage
-   */
+  // get moteurs
   static getEngines(): Engine[] | null {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.ENGINES);
@@ -33,9 +29,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Sauvegarde le thème (dark, light, auto)
-   */
+  // save thème
   static saveTheme(theme: ThemeMode): void {
     try {
       localStorage.setItem(STORAGE_KEYS.THEME, theme);
@@ -44,9 +38,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Récupère le thème sauvegardé
-   */
+  // get thème
   static getTheme(): ThemeMode {
     try {
       const theme = localStorage.getItem(STORAGE_KEYS.THEME) as ThemeMode | null;
@@ -59,9 +51,7 @@ export class StorageService {
     return 'auto';
   }
 
-  /**
-   * Sauvegarde la liste de comparaison
-   */
+  // save compare
   static saveCompareIds(ids: string[]): void {
     try {
       localStorage.setItem(STORAGE_KEYS.COMPARE, JSON.stringify(ids));
@@ -70,9 +60,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Récupère la liste de comparaison
-   */
+  // get compare
   static getCompareIds(): string[] {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.COMPARE);
@@ -82,9 +70,7 @@ export class StorageService {
     }
   }
 
-  /**
-   * Exporte les données sous forme de fichier JSON téléchargeable
-   */
+  // export json
   static exportToJsonFile(engines: Engine[]): void {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(engines, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -95,9 +81,7 @@ export class StorageService {
     downloadAnchor.remove();
   }
 
-  /**
-   * Réinitialise les données du LocalStorage
-   */
+  // clear
   static clearStorage(): void {
     try {
       localStorage.removeItem(STORAGE_KEYS.ENGINES);

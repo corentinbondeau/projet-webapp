@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ApexEngine • Encyclopédie & Comparateur de Moteurs Automobiles</title>
-  <meta name="description" content="Application web interactive d'exploration, de comparaison et de simulation de moteurs de voitures légendaires en Vanilla TypeScript." />
+  <title>ApexEngine — moteurs de voitures</title>
+  <meta name="description" content="Encyclopédie et comparateur de moteurs (TypeScript + Vite)." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,45 +13,45 @@
 </head>
 <body>
   <div id="app">
-    <!-- Barre de Navigation Supérieure -->
+    <!-- nav -->
     <header id="app-navbar"></header>
 
-    <!-- Bannière Hero & Titre -->
+    <!-- hero -->
     <section class="hero-banner">
       <div class="hero-title-group">
-        <h2>Catalogue des Moteurs d'Exception</h2>
-        <p>Explorez les chefs-d'œuvre de la mécanique automobile, comparez leurs performances et écoutez leurs montées en régime.</p>
+        <h2>Catalogue de moteurs</h2>
+        <p>Filtre, compare, et écoute un aperçu sonore via le compte-tours.</p>
       </div>
     </section>
 
-    <!-- Tableau de Bord Métriques / Stats -->
+    <!-- stats -->
     <section id="stats-overview-container"></section>
 
-    <!-- Barre de Filtrage et de Tri Multi-critères -->
+    <!-- filtres -->
     <section id="filter-bar-container"></section>
 
-    <!-- Grille Responsive des Moteurs (CRUD dynamique) -->
+    <!-- grille -->
     <main id="engine-grid-container"></main>
 
-    <!-- Tiroir de Comparaison en bas d'écran -->
+    <!-- tiroir compare -->
     <aside id="compare-drawer"></aside>
 
-    <!-- Modale de Comparaison Face-à-Face -->
+    <!-- modale compare -->
     <div id="compare-modal" class="modal-backdrop"></div>
 
-    <!-- Modale Formulaire Ajout / Édition -->
+    <!-- form ajout / édition -->
     <div id="engine-form-modal" class="modal-backdrop"></div>
 
-    <!-- Modale Fiche Détail & Tachomètre Web Audio -->
+    <!-- détail + tacho -->
     <div id="engine-detail-modal" class="modal-backdrop"></div>
 
-    <!-- Pied de page sémantique -->
+    <!-- footer -->
     <footer class="app-footer">
       <div>
-        <strong>ApexEngine</strong> — Projet de Web Avancé (Vanilla TypeScript & DOM API)
+        <strong>ApexEngine</strong> — projet web AP4 (TS vanilla)
       </div>
       <div>
-        Architecture réactive propulsée par <code>JavaScript Proxy</code> & <code>Web Audio API</code>
+        state via <code>Proxy</code> · son via <code>Web Audio API</code>
       </div>
     </footer>
   </div>

@@ -7,7 +7,7 @@ export class FilterBar {
   constructor() {
     this.element = document.getElementById('filter-bar-container') || document.createElement('section');
     store.subscribe((_state, key) => {
-      // Re-rendre si les filtres changent
+      // re-render si filtres change
       if (!key || key === 'filters' || key === 'engines') {
         this.render();
       }
@@ -102,7 +102,7 @@ export class FilterBar {
   }
 
   private attachEvents(): void {
-    // Clic sur les pilules d'architecture
+    // pilules archi
     const pillButtons = this.element.querySelectorAll('.pill-btn[data-config]');
     pillButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -111,7 +111,7 @@ export class FilterBar {
       });
     });
 
-    // Sélecteur Carburant
+    // carburant
     const fuelSelect = this.element.querySelector('#filter-fuel') as HTMLSelectElement | null;
     if (fuelSelect) {
       fuelSelect.addEventListener('change', () => {
@@ -119,7 +119,7 @@ export class FilterBar {
       });
     }
 
-    // Sélecteur Aspiration
+    // aspiration
     const aspSelect = this.element.querySelector('#filter-aspiration') as HTMLSelectElement | null;
     if (aspSelect) {
       aspSelect.addEventListener('change', () => {
@@ -127,7 +127,7 @@ export class FilterBar {
       });
     }
 
-    // Bouton Favoris
+    // favoris
     const favBtn = this.element.querySelector('#btn-toggle-favs');
     if (favBtn) {
       favBtn.addEventListener('click', () => {
@@ -135,7 +135,7 @@ export class FilterBar {
       });
     }
 
-    // Sélecteur de Tri
+    // tri
     const sortSelect = this.element.querySelector('#sort-by-select') as HTMLSelectElement | null;
     if (sortSelect) {
       sortSelect.addEventListener('change', () => {
@@ -143,7 +143,7 @@ export class FilterBar {
       });
     }
 
-    // Ordre de Tri (Asc / Desc)
+    // asc / desc
     const orderBtn = this.element.querySelector('#btn-toggle-sort-order');
     if (orderBtn) {
       orderBtn.addEventListener('click', () => {
@@ -152,7 +152,7 @@ export class FilterBar {
       });
     }
 
-    // Bouton Réinitialiser les filtres
+    // reset filtres
     const resetBtn = this.element.querySelector('#btn-reset-filters');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {

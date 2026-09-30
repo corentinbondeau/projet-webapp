@@ -5,13 +5,11 @@ export interface ValidationErrors {
 }
 
 export class EngineValidator {
-  /**
-   * Valide les données saisies d'un moteur
-   */
+  // check des champs
   public static validate(data: Partial<Engine>): ValidationErrors {
     const errors: ValidationErrors = {};
 
-    // Nom
+    // nom
     if (!data.name || data.name.trim().length === 0) {
       errors.name = 'Le nom du moteur est requis.';
     } else if (data.name.trim().length < 2) {
@@ -20,27 +18,27 @@ export class EngineValidator {
       errors.name = 'Le nom ne peut pas dépasser 60 caractères.';
     }
 
-    // Constructeur
+    // constructeur
     if (!data.manufacturer || data.manufacturer.trim().length === 0) {
       errors.manufacturer = 'Le constructeur / marque est requis.';
     }
 
-    // Configuration
+    // configuration
     if (!data.configuration) {
       errors.configuration = 'Veuillez sélectionner une architecture de cylindres.';
     }
 
-    // Carburant
+    // carburant
     if (!data.fuel) {
       errors.fuel = 'Veuillez sélectionner le type de carburant.';
     }
 
-    // Aspiration
+    // aspiration
     if (!data.aspiration) {
       errors.aspiration = "Veuillez sélectionner le type d'alimentation.";
     }
 
-    // Puissance (ch)
+    // puissance (ch)
     if (data.power === undefined || isNaN(data.power)) {
       errors.power = 'La puissance en chevaux (ch) est requise.';
     } else if (data.power <= 0) {
@@ -49,7 +47,7 @@ export class EngineValidator {
       errors.power = 'La puissance ne peut pas dépasser 5 000 ch.';
     }
 
-    // Couple (Nm)
+    // couple (Nm)
     if (data.torque === undefined || isNaN(data.torque)) {
       errors.torque = 'Le couple en Nm est requis.';
     } else if (data.torque <= 0) {
@@ -58,7 +56,7 @@ export class EngineValidator {
       errors.torque = 'Le couple ne peut pas dépasser 6 000 Nm.';
     }
 
-    // Régime Max (RPM)
+    // régime max
     if (data.maxRpm === undefined || isNaN(data.maxRpm)) {
       errors.maxRpm = 'Le régime moteur max (RPM) est requis.';
     } else if (data.maxRpm < 2000) {
@@ -67,7 +65,7 @@ export class EngineValidator {
       errors.maxRpm = 'Le régime max ne peut pas dépasser 25 000 tr/min.';
     }
 
-    // Cylindrée (cm3)
+    // cylindrée (cm3)
     if (data.configuration !== 'Électrique') {
       if (data.displacement === undefined || isNaN(data.displacement)) {
         errors.displacement = 'La cylindrée en cm³ est requise.';
@@ -78,7 +76,7 @@ export class EngineValidator {
       }
     }
 
-    // Année de début
+    // année de début
     const currentYear = new Date().getFullYear();
     if (data.yearStart === undefined || isNaN(data.yearStart)) {
       errors.yearStart = "L'année de lancement est requise.";
@@ -86,14 +84,14 @@ export class EngineValidator {
       errors.yearStart = `L'année doit être comprise entre 1886 et ${currentYear + 2}.`;
     }
 
-    // Année de fin
+    // année de fin
     if (data.yearEnd !== null && data.yearEnd !== undefined && !isNaN(data.yearEnd)) {
       if (data.yearStart && data.yearEnd < data.yearStart) {
         errors.yearEnd = "L'année de fin ne peut pas être antérieure à l'année de début.";
       }
     }
 
-    // Description
+    // description
     if (!data.description || data.description.trim().length === 0) {
       errors.description = 'Une brève description technique est requise.';
     } else if (data.description.trim().length < 10) {

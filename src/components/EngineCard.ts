@@ -12,7 +12,7 @@ export class EngineCard {
 
     const isCompared = store.state.compareEngineIds.includes(engine.id);
 
-    // Détermination de la classe de badge de configuration
+    // classe badge selon config
     let badgeClass = 'badge-default';
     if (engine.configuration.includes('V8')) badgeClass = 'badge-v8';
     else if (engine.configuration.includes('V12') || engine.configuration.includes('W16')) badgeClass = 'badge-v12';
@@ -103,17 +103,17 @@ export class EngineCard {
   }
 
   private static attachEvents(card: HTMLElement, engine: Engine): void {
-    // Clic global sur la carte pour ouvrir la modale détails
+    // click carte -> détail
     card.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
-      // Ignorer si clic sur un bouton d'action
+      // ignore les boutons
       if (target.closest('button') || target.closest('[data-action]')) {
         return;
       }
       document.dispatchEvent(new CustomEvent('open-engine-detail', { detail: { engineId: engine.id } }));
     });
 
-    // Action Favori
+    // favori
     const favBtn = card.querySelector('[data-action="toggle-fav"]');
     if (favBtn) {
       favBtn.addEventListener('click', (e) => {
@@ -126,7 +126,7 @@ export class EngineCard {
       });
     }
 
-    // Action Like
+    // like
     const likeBtn = card.querySelector('[data-action="like"]');
     if (likeBtn) {
       likeBtn.addEventListener('click', (e) => {
@@ -137,7 +137,7 @@ export class EngineCard {
       });
     }
 
-    // Action Play Sound (Aperçu sonore Web Audio)
+    // aperçu son
     const soundBtn = card.querySelector('[data-action="play-sound"]');
     if (soundBtn) {
       soundBtn.addEventListener('click', (e) => {
@@ -157,7 +157,7 @@ export class EngineCard {
       });
     }
 
-    // Action Comparer
+    // comparer
     const compareBtn = card.querySelector('[data-action="compare"]');
     if (compareBtn) {
       compareBtn.addEventListener('click', (e) => {
@@ -172,7 +172,7 @@ export class EngineCard {
       });
     }
 
-    // Action Modifier
+    // edit
     const editBtn = card.querySelector('[data-action="edit"]');
     if (editBtn) {
       editBtn.addEventListener('click', (e) => {
@@ -183,7 +183,7 @@ export class EngineCard {
       });
     }
 
-    // Action Supprimer avec animation d'exit
+    // delete (+ anim)
     const deleteBtn = card.querySelector('[data-action="delete"]');
     if (deleteBtn) {
       deleteBtn.addEventListener('click', (e) => {

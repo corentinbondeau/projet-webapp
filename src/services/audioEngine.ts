@@ -1,36 +1,32 @@
 import { Engine, EngineConfiguration } from '../types/engine';
 
 /**
- * Simulateur audio haute-fidélité et velouté pour moteurs de voitures.
- * Utilise la synthèse soustractive et additive via l'API Web Audio standard :
- * - Calcul des ordres d'allumage physiques (V12, V10, V8, Flat-6, 5 en ligne, etc.)
- * - Étage de saturation douce (soft clipping par tanh) sans distorsion numérique agressive
- * - Compresseur dynamique de studio (DynamicsCompressorNode) pour éliminer toute saturation/clipping
- * - Filtrage acoustique d'échappement progressif
+ * simulateur sonore moteurs via web audio.
+ * oscillateurs + filtre + un peu de saturation douce.
  */
 export class AudioEngineSimulator {
   private static ctx: AudioContext | null = null;
   private static masterGain: GainNode | null = null;
   private static compressor: DynamicsCompressorNode | null = null;
 
-  // Oscillateurs pour la texture de combustion
-  private static osc1: OscillatorNode | null = null; // Fondamentale d'allumage
-  private static osc2: OscillatorNode | null = null; // Harmonique d'ordre 2
-  private static osc3: OscillatorNode | null = null; // Sous-harmonique carter / basse
-  private static osc4: OscillatorNode | null = null; // Harmonique supérieure / timbre
-  private static lfo: OscillatorNode | null = null;  // LFO de battement syncopé (5-cylindres)
+  // oscillateurs
+  private static osc1: OscillatorNode | null = null; // fondamentale
+  private static osc2: OscillatorNode | null = null; // harmonique 2
+  private static osc3: OscillatorNode | null = null; // basse
+  private static osc4: OscillatorNode | null = null; // timbre
+  private static lfo: OscillatorNode | null = null;  // lFO de battement syncopé (5-cylindres)
   private static lfoGain: GainNode | null = null;
 
-  // Suralimentation (Sifflement de turbo feutré)
+  // turbo
   private static turboNoise: AudioBufferSourceNode | null = null;
   private static turboFilter: BiquadFilterNode | null = null;
   private static turboGain: GainNode | null = null;
 
-  // Filtres acoustiques d'échappement
+  // filtres échappement
   private static exhaustFilter: BiquadFilterNode | null = null;
   private static waveShaper: WaveShaperNode | null = null;
 
-  // État
+  // état
   private static isPlaying: boolean = false;
   private static currentEngine: Partial<Engine> | null = null;
   private static currentRpm: number = 800;
@@ -50,10 +46,7 @@ export class AudioEngineSimulator {
     }
   }
 
-  /**
-   * Courbe de saturation douce type lampe analogique (tanh)
-   * Évite complètement le clipping numérique désagréable.
-   */
+  // courbe tanh pour la saturation
   private static makeSoftSaturationCurve(): Float32Array {
     const nSamples = 44100;
     const curve = new Float32Array(nSamples);
@@ -65,9 +58,7 @@ export class AudioEngineSimulator {
     return curve;
   }
 
-  /**
-   * Génère un buffer de bruit blanc pour le turbo
-   */
+  // bruit blanc turbo
   private static createNoiseBuffer(): AudioBuffer | null {
     if (!this.ctx) return null;
     const bufferSize = this.ctx.sampleRate * 2;
@@ -79,9 +70,7 @@ export class AudioEngineSimulator {
     return noiseBuffer;
   }
 
-  /**
-   * Démarre la simulation sonore d'un moteur
-   */
+  // démarre le son
   public static start(engineOrPitch: Engine | number = 500, maxRpmFallback: number = 8500) {
     this.initContext();
     if (!this.ctx) return;
@@ -111,7 +100,7 @@ export class AudioEngineSimulator {
 
     const now = this.ctx.currentTime;
 
-    // 1. Compresseur Dynamique de Studio (Anti-saturation / Limiteur)
+    // compresseur
     this.compressor = this.ctx.createDynamicsCompressor();
     this.compressor.threshold.setValueAtTime(-18, now);
     this.compressor.knee.setValueAtTime(12, now);
@@ -119,31 +108,31 @@ export class AudioEngineSimulator {
     this.compressor.attack.setValueAtTime(0.005, now);
     this.compressor.release.setValueAtTime(0.12, now);
 
-    // 2. Master Gain équilibré
+    // master gain
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.setValueAtTime(0.001, now);
     this.masterGain.gain.exponentialRampToValueAtTime(0.16, now + 0.12);
 
-    // 3. Traitement analogique doux (WaveShaper)
+    // waveshaper
     this.waveShaper = this.ctx.createWaveShaper();
     this.waveShaper.curve = this.makeSoftSaturationCurve() as any;
     this.waveShaper.oversample = '4x';
 
-    // 4. Filtre acoustique d'échappement (Passe-bas soyeux)
+    // filtre passe-bas
     this.exhaustFilter = this.ctx.createBiquadFilter();
     this.exhaustFilter.type = 'lowpass';
     this.exhaustFilter.frequency.setValueAtTime(450, now);
     this.exhaustFilter.Q.setValueAtTime(1.2, now);
 
-    // 5. Configuration des oscillateurs selon l'architecture
+    // oscillateurs selon l'archi
     this.setupOscillators();
 
-    // 6. Turbo feutré si applicable
+    // turbo si besoin
     if (this.isTurbo && !this.isElectric) {
       this.setupTurbo();
     }
 
-    // 7. Connexions audio protégées contre la saturation
+    // branchements
     this.waveShaper.connect(this.exhaustFilter);
     this.exhaustFilter.connect(this.compressor);
     this.compressor.connect(this.masterGain);
@@ -153,9 +142,7 @@ export class AudioEngineSimulator {
     this.isPlaying = true;
   }
 
-  /**
-   * Configure les couches d'oscillateurs avec des gains équilibrés
-   */
+  // setup des oscillateurs
   private static setupOscillators() {
     if (!this.ctx || !this.waveShaper) return;
 
@@ -170,7 +157,7 @@ export class AudioEngineSimulator {
     const g4 = this.ctx.createGain();
 
     if (this.isElectric) {
-      // ÉLECTRIQUE : Ondes sinusoïdales douces + sifflement d'onduleur
+      // électrique
       this.osc1.type = 'sine';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sine';
@@ -181,7 +168,7 @@ export class AudioEngineSimulator {
       g3.gain.value = 0.08;
       g4.gain.value = 0.05;
     } else if (this.config === 'Rotatif') {
-      // ROTATIF (WANKEL) : Son continu rapide
+      // rotatif (wankel)
       this.osc1.type = 'sawtooth';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sine';
@@ -192,7 +179,7 @@ export class AudioEngineSimulator {
       g3.gain.value = 0.10;
       g4.gain.value = 0.06;
     } else if (this.config === 'V12') {
-      // V12 : Sonorité riche, pure et symphonique
+      // v12
       this.osc1.type = 'sawtooth';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sine';
@@ -203,7 +190,7 @@ export class AudioEngineSimulator {
       g3.gain.value = 0.12;
       g4.gain.value = 0.06;
     } else if (this.config === 'V10') {
-      // V10 : Cri F1 wailing
+      // v10
       this.osc1.type = 'sawtooth';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sawtooth';
@@ -214,7 +201,7 @@ export class AudioEngineSimulator {
       g3.gain.value = 0.10;
       g4.gain.value = 0.05;
     } else if (this.config === '5 en ligne') {
-      // 5 EN LIGNE : Son syncopé (Audi RS3)
+      // 5 en ligne
       this.osc1.type = 'sawtooth';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sawtooth';
@@ -225,7 +212,7 @@ export class AudioEngineSimulator {
       g3.gain.value = 0.10;
       g4.gain.value = 0.05;
 
-      // Battement 5 cylindres
+      // battement 5 cyl
       this.lfo = this.ctx.createOscillator();
       this.lfo.type = 'sine';
       this.lfoGain = this.ctx.createGain();
@@ -234,7 +221,7 @@ export class AudioEngineSimulator {
       this.lfoGain.connect(this.osc1.frequency);
       this.lfo.start();
     } else if (this.config === 'Flat-6') {
-      // FLAT-6 (Porsche Boxer) : Timbre rauque mais propre
+      // flat-6
       this.osc1.type = 'sawtooth';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sine';
@@ -245,7 +232,7 @@ export class AudioEngineSimulator {
       g3.gain.value = 0.12;
       g4.gain.value = 0.06;
     } else if (this.config === 'W16') {
-      // W16 : Grondement grave et velouté
+      // w16
       this.osc1.type = 'sawtooth';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sine';
@@ -253,10 +240,10 @@ export class AudioEngineSimulator {
 
       g1.gain.value = 0.15;
       g2.gain.value = 0.10;
-      g3.gain.value = 0.18; // Sub-bass rond
+      g3.gain.value = 0.18; // sub-bass rond
       g4.gain.value = 0.04;
     } else {
-      // V8, 6 en ligne, 4 en ligne
+      // v8 / i6 / i4
       this.osc1.type = 'sawtooth';
       this.osc2.type = 'triangle';
       this.osc3.type = 'sine';
@@ -284,9 +271,7 @@ export class AudioEngineSimulator {
     this.osc4.start();
   }
 
-  /**
-   * Suralimentation : souffle feutré sans bruit strident
-   */
+  // setup turbo
   private static setupTurbo() {
     if (!this.ctx || !this.compressor) return;
 
@@ -312,9 +297,7 @@ export class AudioEngineSimulator {
     this.turboNoise.start();
   }
 
-  /**
-   * Décharge de turbo au lever de pied (Blow-off valve feutrée)
-   */
+  // blow-off au lever de pied
   private static triggerBlowOffValve() {
     if (!this.ctx || !this.isTurbo || this.isElectric || !this.compressor) return;
 
@@ -342,9 +325,7 @@ export class AudioEngineSimulator {
     bovSource.stop(now + 0.3);
   }
 
-  /**
-   * Ordre d'allumage par configuration
-   */
+  // ordre d'allumage
   private static getPulsesPerRevolution(config: EngineConfiguration): number {
     switch (config) {
       case '4 en ligne':
@@ -371,9 +352,7 @@ export class AudioEngineSimulator {
     }
   }
 
-  /**
-   * Ajuste le régime moteur en temps réel
-   */
+  // set rpm
   public static setRpm(rpm: number) {
     this.currentRpm = Math.max(0, Math.min(rpm, this.maxRpm));
     if (this.isPlaying) {
@@ -381,9 +360,7 @@ export class AudioEngineSimulator {
     }
   }
 
-  /**
-   * Met à jour les fréquences et les filtres de façon fluide
-   */
+  // update fréquences / filtres
   private static updateFrequency() {
     if (!this.ctx || !this.osc1 || !this.osc2 || !this.osc3 || !this.osc4 || !this.exhaustFilter) return;
 
@@ -392,7 +369,7 @@ export class AudioEngineSimulator {
     const rpmRatio = Math.max(0.01, rpm / this.maxRpm);
 
     if (this.isElectric) {
-      // ÉLECTRIQUE : Fréquence pure
+      // électrique
       const inverterFreq = 180 + (rpm * 0.12);
       this.osc1.frequency.setTargetAtTime(inverterFreq, now, 0.04);
       this.osc2.frequency.setTargetAtTime(inverterFreq * 2.0, now, 0.04);
@@ -404,7 +381,7 @@ export class AudioEngineSimulator {
       return;
     }
 
-    // MOTEURS THERMIQUES & ROTATIFS
+    // thermiques / rotatifs
     const pulsesPerRev = this.getPulsesPerRevolution(this.config);
     const baseFiringFreq = Math.max(22, (rpm / 60) * pulsesPerRev);
 
@@ -439,11 +416,11 @@ export class AudioEngineSimulator {
       this.osc4.frequency.setTargetAtTime(baseFiringFreq * 3.0, now, 0.035);
     }
 
-    // Filtre acoustique progressif sans agressivité
+    // filtre progressif
     const exhaustCutoff = 220 + (rpmRatio * 1600);
     this.exhaustFilter.frequency.setTargetAtTime(exhaustCutoff, now, 0.04);
 
-    // Turbo modéré
+    // turbo
     if (this.isTurbo && this.turboFilter && this.turboGain) {
       const turboFreq = 1800 + (rpmRatio * 4200);
       this.turboFilter.frequency.setTargetAtTime(turboFreq, now, 0.05);
@@ -453,9 +430,7 @@ export class AudioEngineSimulator {
     }
   }
 
-  /**
-   * Coup d'accélérateur réaliste
-   */
+  // blip d'accélérateur
   public static revUp(callbackRpm?: (rpm: number) => void) {
     if (!this.isPlaying) return;
     const targetRpm = Math.round(this.maxRpm * 0.94);
@@ -465,17 +440,17 @@ export class AudioEngineSimulator {
     const interval = setInterval(() => {
       progress += 0.05;
       if (progress <= 0.45) {
-        // Montée
+        // montée
         const current = idleRpm + (targetRpm - idleRpm) * Math.sin((progress / 0.45) * (Math.PI / 2));
         this.setRpm(current);
         callbackRpm?.(current);
       } else if (progress <= 0.55) {
-        // Rupteur
+        // rupteur
         const current = targetRpm + (Math.random() - 0.5) * (this.maxRpm * 0.02);
         this.setRpm(current);
         callbackRpm?.(current);
       } else if (progress <= 1.0) {
-        // Descente
+        // descente
         if (progress === 0.60 && this.isTurbo) {
           this.triggerBlowOffValve();
         }
@@ -491,9 +466,7 @@ export class AudioEngineSimulator {
     }, 25);
   }
 
-  /**
-   * Arrêt doux
-   */
+  // stop
   public static stop() {
     if (!this.isPlaying || !this.ctx || !this.masterGain) return;
 
@@ -525,7 +498,7 @@ export class AudioEngineSimulator {
           this.compressor?.disconnect();
           this.masterGain?.disconnect();
         } catch {
-          // Déjà arrêté
+          // déjà stop
         }
         this.isPlaying = false;
         this.currentEngine = null;

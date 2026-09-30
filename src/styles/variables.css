@@ -1,10 +1,10 @@
 :root {
-  /* Police & Typographie */
+  /* polices */
   --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-display: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, monospace;
 
-  /* Palette Principale : Vert, Bleu, Beige */
+  /* couleurs */
   --accent-primary: #10b981;
   --accent-primary-hover: #059669;
   --accent-secondary: #2563eb;
@@ -24,7 +24,7 @@
   --accent-beige-dark: #bba287;
   --accent-beige-light: #f5efe6;
 
-  /* Rayons de courbure & Ombres */
+  /* radius / ombres */
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 18px;
@@ -35,7 +35,7 @@
   --transition-bounce: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Thème Sombre (Par défaut) : Fond bleu nuit profond, touches vert émeraude & accents beige */
+/* thème sombre */
 :root[data-theme="dark"],
 :root:not([data-theme]) {
   --bg-app: #081018;
@@ -63,7 +63,7 @@
   --gauge-fill: linear-gradient(135deg, #10b981, #2563eb);
 }
 
-/* Thème Clair : Fond beige naturel, surfaces blanches/sable, texte bleu marine & accents vert */
+/* thème clair */
 :root[data-theme="light"] {
   --bg-app: #f6f2ea;
   --bg-surface: #ffffff;

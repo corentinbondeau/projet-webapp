@@ -15,9 +15,9 @@ class App {
   private detailModal!: EngineDetailModal;
 
   public async init(): Promise<void> {
-    console.log('🏎️ Initialisation de ApexEngine (Vanilla TS + Proxy Store)...');
+    console.log('apexengine démarré');
 
-    // Instanciation des composants UI (s'attachent automatiquement aux conteneurs DOM)
+    // composants
     new Navbar();
     new StatsOverview();
     new FilterBar();
@@ -26,10 +26,10 @@ class App {
     this.detailModal = new EngineDetailModal();
     new CompareDrawer();
 
-    // Raccourcis clavier ergonomiques
+    // raccourcis clavier
     this.initKeyboardShortcuts();
 
-    // Chargement initial des données via Fetch API ou LocalStorage
+    // chargement données
     try {
       const initialEngines = await EngineService.loadInitialEngines();
       store.setEngines(initialEngines);
@@ -44,7 +44,7 @@ class App {
 
   private initKeyboardShortcuts(): void {
     window.addEventListener('keydown', (e) => {
-      // Ignorer si l'utilisateur est en train d'écrire dans un champ input/textarea
+      // ignore si on tape dans un champ
       const target = e.target as HTMLElement;
       if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT')) {
         if (e.key === 'Escape') {
@@ -53,7 +53,7 @@ class App {
         return;
       }
 
-      // Raccourci '/' : focus recherche
+      // / -> recherche
       if (e.key === '/') {
         e.preventDefault();
         const searchInput = document.getElementById('global-search-input') as HTMLInputElement | null;
@@ -61,13 +61,13 @@ class App {
         searchInput?.select();
       }
 
-      // Raccourci 'n' : ouvrir le formulaire nouveau moteur
+      // n -> nouveau moteur
       if (e.key === 'n' || e.key === 'N') {
         e.preventDefault();
         this.formModal.open('create');
       }
 
-      // Raccourci 'Escape' : fermer toutes les modales ouvertes
+      // escape -> ferme les modales
       if (e.key === 'Escape') {
         this.formModal.close();
         this.detailModal.close();
@@ -76,7 +76,7 @@ class App {
   }
 }
 
-// Démarrage au chargement du DOM
+// go
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.init();

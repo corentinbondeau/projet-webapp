@@ -286,23 +286,23 @@ export class EngineFormModal {
   }
 
   private attachFormEvents(): void {
-    // Boutons de fermeture
+    // close
     this.backdrop.querySelector('#btn-close-modal')?.addEventListener('click', () => this.close());
     this.backdrop.querySelector('#btn-cancel-form')?.addEventListener('click', () => this.close());
 
-    // Clic extérieur pour fermer
+    // click dehors -> close
     this.backdrop.addEventListener('click', (e) => {
       if (e.target === this.backdrop) {
         this.close();
       }
     });
 
-    // Soumission du formulaire
+    // submit
     this.backdrop.querySelector('#btn-submit-form')?.addEventListener('click', () => {
       this.handleSubmit();
     });
 
-    // Validation en direct sur chaque input
+    // validation live
     const inputs = this.backdrop.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
       input.addEventListener('input', () => {
@@ -342,15 +342,15 @@ export class EngineFormModal {
       soundPitch: 500
     };
 
-    // Validation
+    // validation
     const validationErrors = EngineValidator.validate(rawData);
 
-    // Réinitialiser les erreurs affichées
+    // clear erreurs
     this.backdrop.querySelectorAll('.field-error').forEach(el => el.textContent = '');
     this.backdrop.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
 
     if (Object.keys(validationErrors).length > 0) {
-      // Afficher les erreurs
+      // show erreurs
       for (const [field, message] of Object.entries(validationErrors)) {
         const errorEl = this.backdrop.querySelector(`#error-${field}`);
         const inputEl = this.backdrop.querySelector(`[name="${field}"]`);
@@ -361,7 +361,7 @@ export class EngineFormModal {
       return;
     }
 
-    // Sauvegarde
+    // save
     if (this.currentMode === 'edit' && this.currentEngineId) {
       store.updateEngine(this.currentEngineId, rawData);
       Toast.show(`Moteur "${rawData.name}" mis à jour avec succès !`, 'success');

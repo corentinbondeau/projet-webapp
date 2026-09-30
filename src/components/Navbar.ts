@@ -14,10 +14,10 @@ export class Navbar {
   }
 
   private initThemeWatcher(): void {
-    // Appliquer le thème initial au document
+    // thème initial
     this.applyTheme(store.state.theme);
 
-    // Écouteur de changement de préférence système si mode 'auto'
+    // sync avec le thème système (mode auto)
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
       if (store.state.theme === 'auto') {
         this.applyTheme('auto');
@@ -106,7 +106,7 @@ export class Navbar {
   }
 
   private attachEvents(nextThemeMode: ThemeMode): void {
-    // Recherche en direct
+    // recherche
     const searchInput = this.element.querySelector('#global-search-input') as HTMLInputElement | null;
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
@@ -115,7 +115,7 @@ export class Navbar {
       });
     }
 
-    // Basculeur de thème
+    // thème
     const themeBtn = this.element.querySelector('#btn-theme-toggle');
     if (themeBtn) {
       themeBtn.addEventListener('click', () => {
@@ -126,7 +126,7 @@ export class Navbar {
       });
     }
 
-    // Export JSON
+    // export
     const exportBtn = this.element.querySelector('#btn-export-json');
     if (exportBtn) {
       exportBtn.addEventListener('click', () => {
@@ -135,7 +135,7 @@ export class Navbar {
       });
     }
 
-    // Reset base par défaut (Fetch API)
+    // reset
     const resetBtn = this.element.querySelector('#btn-reset-data');
     if (resetBtn) {
       resetBtn.addEventListener('click', async () => {
@@ -151,7 +151,7 @@ export class Navbar {
       });
     }
 
-    // Bouton Ajouter un moteur
+    // ajouter
     const addBtn = this.element.querySelector('#btn-add-engine');
     if (addBtn) {
       addBtn.addEventListener('click', () => {
@@ -159,7 +159,7 @@ export class Navbar {
       });
     }
 
-    // Logo click (reset filters)
+    // click logo -> reset filtres
     const brandHome = this.element.querySelector('#brand-home-btn');
     if (brandHome) {
       brandHome.addEventListener('click', () => {

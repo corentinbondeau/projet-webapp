@@ -2,9 +2,8 @@ import { AppState, Engine, FilterState, StoreListener, ThemeMode } from '../type
 import { StorageService } from './storage';
 
 /**
- * Création d'un Proxy réactif profond (Deep Reactive Proxy)
- * Intercepte toutes les modifications de propriétés et tableaux
- * pour déclencher automatiquement la synchronisation DOM et LocalStorage.
+ * proxy réactif : dès qu'une prop change, on appelle onChange
+ * (pour sync DOM + localStorage).
  */
 function createReactiveObject<T extends object>(target: T, onChange: (key: string, value: any) => void): T {
   return new Proxy(target, {
@@ -12,7 +11,7 @@ function createReactiveObject<T extends object>(target: T, onChange: (key: strin
       const stringProp = String(prop);
       const oldValue = obj[prop];
       
-      // Si la valeur est un objet et n'est pas encore un Proxy, on la rend réactive
+      // objet nested -> aussi wrappé
       const valToSet = (typeof value === 'object' && value !== null && !value._isProxy)
         ? createReactiveObject(value, onChange)
         : value;
@@ -70,17 +69,15 @@ class Store {
       activeView: 'grid'
     };
 
-    // Initialisation du Proxy Réactif
+    // init proxy
     this.state = createReactiveObject(this.rawState, (key, value) => {
       this.handleStateChange(key, value);
     });
   }
 
-  /**
-   * Traite les changements interceptés par le Proxy
-   */
+  // quand le proxy voit un changement
   private handleStateChange(key: string, _value: any): void {
-    // Persistance automatique dans LocalStorage
+    // save localstorage
     if (key === 'engines' || !isNaN(Number(key))) {
       StorageService.saveEngines(this.state.engines);
     }
@@ -91,23 +88,19 @@ class Store {
       StorageService.saveCompareIds(this.state.compareEngineIds);
     }
 
-    // Notification des écouteurs du DOM
+    // notif listeners
     this.notify(key);
   }
 
-  /**
-   * Abonnement aux mutations d'état (Pattern Observateur / PubSub)
-   */
+  // subscribe
   public subscribe(listener: StoreListener): () => void {
     this.listeners.add(listener);
-    // Exécution initiale immédiate
+    // call immédiat
     listener(this.state);
     return () => this.listeners.delete(listener);
   }
 
-  /**
-   * Notifie tous les abonnés
-   */
+  // notify
   private notify(changeKey?: string): void {
     this.listeners.forEach(listener => {
       try {
@@ -118,7 +111,7 @@ class Store {
     });
   }
 
-  // ================= ACTIONS ================= //
+  // actions
 
   public setEngines(engines: Engine[]): void {
     this.state.engines = engines;
@@ -134,7 +127,7 @@ class Store {
       likes: 0,
       createdAt: new Date().toISOString()
     };
-    // Déclenche le trap 'set' du Proxy
+    // trigger le set du proxy
     this.state.engines = [newEngine, ...this.state.engines];
     return newEngine;
   }
@@ -159,7 +152,7 @@ class Store {
   public deleteEngine(id: string): boolean {
     const initialLength = this.state.engines.length;
     this.state.engines = this.state.engines.filter(e => e.id !== id);
-    // Retirer aussi des comparaisons si présent
+    // retire aussi de la compare
     if (this.state.compareEngineIds.includes(id)) {
       this.state.compareEngineIds = this.state.compareEngineIds.filter(item => item !== id);
     }
@@ -218,7 +211,7 @@ class Store {
       return true;
     } else {
       if (current.length >= 3) {
-        return false; // Limité à 3 moteurs pour une comparaison lisible
+        return false; // limité à 3 moteurs pour une comparaison lisible
       }
       current.push(id);
       this.state.compareEngineIds = current;
@@ -234,15 +227,13 @@ class Store {
     this.state.activeView = view;
   }
 
-  /**
-   * Calcul des moteurs filtrés et triés (Computed State)
-   */
+  // filtres + tri
   public getFilteredEngines(): Engine[] {
     const { searchQuery, configuration, fuel, aspiration, onlyFavorites, minPower, maxPower, sortBy, sortOrder } = this.state.filters;
     const query = searchQuery.trim().toLowerCase();
 
     return this.state.engines.filter(engine => {
-      // Recherche textuelle multi-champs
+      // recherche
       if (query) {
         const matchesName = engine.name.toLowerCase().includes(query);
         const matchesBrand = engine.manufacturer.toLowerCase().includes(query);
@@ -253,27 +244,27 @@ class Store {
         }
       }
 
-      // Filtre configuration
+      // config
       if (configuration !== 'ALL' && engine.configuration !== configuration) {
         return false;
       }
 
-      // Filtre carburant
+      // carburant
       if (fuel !== 'ALL' && engine.fuel !== fuel) {
         return false;
       }
 
-      // Filtre aspiration
+      // aspiration
       if (aspiration !== 'ALL' && engine.aspiration !== aspiration) {
         return false;
       }
 
-      // Filtre favoris
+      // favoris
       if (onlyFavorites && !engine.isFavorite) {
         return false;
       }
 
-      // Filtre puissance
+      // puissance
       if (engine.power < minPower || engine.power > maxPower) {
         return false;
       }
@@ -293,9 +284,7 @@ class Store {
     });
   }
 
-  /**
-   * Calcul des métriques globales pour le tableau de bord
-   */
+  // stats dashboard
   public getStats() {
     const list = this.state.engines;
     const total = list.length;

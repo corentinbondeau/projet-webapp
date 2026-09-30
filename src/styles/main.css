@@ -29,7 +29,7 @@ button, input, select, textarea {
   font-family: inherit;
 }
 
-/* Scrollbar moderne */
+/* scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -48,7 +48,7 @@ button, input, select, textarea {
   background: var(--text-muted);
 }
 
-/* Section Héro & Titres */
+/* hero */
 .hero-banner {
   max-width: 1400px;
   margin: 1.5rem auto 0;
@@ -79,7 +79,7 @@ button, input, select, textarea {
   gap: 0.75rem;
 }
 
-/* Pied de page */
+/* pied de page */
 .app-footer {
   max-width: 1400px;
   margin: 4rem auto 2rem;
